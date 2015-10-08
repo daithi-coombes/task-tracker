@@ -1,5 +1,7 @@
-/node_modules
+/build
+/data
 /foo
+/node_modules
 /vendor
 
 foo.*
