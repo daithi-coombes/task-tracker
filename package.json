@@ -1,0 +1,26 @@
+{
+  "name": "task-tracker",
+  "version": "0.0.1",
+  "description": "Series of bash scripts and nodejs apps to research monitoring user actions to predict tasks completed by grouping recorded events",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/daithi-coombes/task-tracker.git"
+  },
+  "keywords": [
+    "project",
+    "management",
+    "task",
+    "tasking",
+    "tracking"
+  ],
+  "author": "daithi coombes",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daithi-coombes/task-tracker/issues"
+  },
+  "homepage": "https://github.com/daithi-coombes/task-tracker#readme"
+}
