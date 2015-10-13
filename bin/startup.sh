@@ -1,13 +1,7 @@
 #! /bin/bash
 
-###
-# logging
-###
-script /var/log/terminal-activities.log &
-export PROMPT_COMMAND='history -a'
+# note: this is my own personal script for setting up 2nd monitor and running
+# tmux. Not part of the taskTraker package.
 
-###
-# main()
-###
 xrandr --output VGA1 --right-of LVDS1
 tmux
