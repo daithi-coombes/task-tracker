@@ -1,17 +1,17 @@
 #! /bin/bash
+#
+# Monitors ~/.bash_history and logs all `cd` commands to the log file:
+# /var/log/terminal-cd.log
+#
+# @author daithi coombes <webeire@gmail.com>
+# @url https://github.com/daithi-coombes/task-tracker
 
-#tail -f ~/.bash_history | while read line; do echo -n $(date -u -Ins);
-#  echo "$line" | awk '/^cd .*$/ {
-#    print $line, $2| "tee /var/log/terminal-cd.log"
-#  }'
-#done
+tail -f ~/.bash_history | while read line; do
 
-tail -f ~/.bash_history | while read line; do echo -n $(date -u -Ins); echo -e "\t$line"; done | tee /var/log/terminal-cd.log
+  datetimeCmd="$(date -u -Ins) $line"
+  regex="cd\s.*$"
 
-#tail -fn0 ~/.bash_history | awk -v date="$(date -u -Ins)" '/^cd .*$/ {
-#  print $(date -u -Ins), $2| "tee /var/log/terminal-cd.log"
-#}'
-
-#tail -fn0 ~/.bash_history | awk -v date="$(date +"%Y-%m-%d %r")" '/^cd .*$/ {
-#  print date, $2| "tee /var/log/terminal-cd.log"
-#}'
+  if [[ $line =~ $regex ]]; then
+    echo "$datetimeCmd" | tee -a /var/log/terminal-cd.log
+  fi
+done
