@@ -15,13 +15,16 @@
     "fs": "latest"
   },
   "devDependencies": {
-    "mocha":      "latest",
-    "should":     "latest",
-    "sinon":      "latest",
-    "nock":       "latest",
-    "supertest":  "latest",
-    "rewire":     "latest",
-    "jsdoc":      "latest"
+    "mocha":        "latest",
+    "mock-fs":      "latest",
+    "should":       "latest",
+    "sinon":        "latest",
+    "nock":         "latest",
+    "lodash":       "latest",
+    "loggly":       "latest",
+    "supertest":    "latest",
+    "rewire":       "latest",
+    "jsdoc":        "latest"
   },
   "repository": {
     "type": "git",
