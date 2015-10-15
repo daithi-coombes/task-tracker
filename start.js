@@ -1,17 +1,16 @@
 var terminalCD = require('./lib/terminalCD')
   , logger = require('./lib/logger')
+  , config = require('./config.js')
 
-logger.setConfig({
-    token: ,
-    subdomain: config.subdomain,
-    auth: {
-      username: config.username,
-      password: config.password
-    },
-    json: true,
-    tags: ['devOps','terminal-cd']
-  })
-  .log('this is a test', function(err, result){
-    console.log(err)
-    console.log(result)
-  })
+
+logger.setConfig(config)
+
+terminalCD.readLog(null, function(err, data){
+
+  for(var x=0; x<data.length; x++)
+    logger.log(data[x], function(err, result){
+      console.log(err)
+      console.log(result)
+      console.log('**************')
+    })
+})
