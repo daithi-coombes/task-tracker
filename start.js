@@ -13,4 +13,12 @@ terminalCD.readLog(null, function(err, data){
       console.log(result)
       console.log('**************')
     })
+
+  terminalCD.backupLog(null, function(err, backupFile){
+    if(err)
+      throw err
+
+    console.log('logs backed up to...')
+    console.log('\t'+backupFile)
+  })
 })
