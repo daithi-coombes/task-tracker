@@ -1,8 +1,10 @@
-/build
-/data
-/foo
-/node_modules
-/vendor
+/express/build
+/express/data
+/express/foo
+/express/node_modules
+/express/vendor
+/express/foo.*
+/express/config.js
 
 foo.*
 config.js
