@@ -2,29 +2,29 @@
 
 ### Installation
 
-##### <u>First</u>
-make sure that your terminal is logging history in realtime, even across
-emulator sessions such as `tmux` etc. For me, on a Debian 8, the solution was
-to append the following to `~/.bashrc`:
+clone this repository and change to its directory:
+```
+git clone https://github.com/daithi-coombes/task-tracker
+cd task-tracker
+```
 
-```bash
+if you want live metrics then add this to your `~/.bashrc` file:
+```
 shopt -s histappend
 export PROMPT_COMMAND="history -a;$PROMPT_COMMAND"
 ```
-more info [here](https://askubuntu.com/questions/67283)
 
-
-##### <u>Second</u>
-clone this repo and run the bash scripts in `bin/` folder:
-```bash
-git clone https://github.com/daithi-coombes/taskTraker.git
-cd bin
-./terminal-cd-log.sh
+next run the bash script that log changes to your terminal history
+and the node app to write logs to the database
+```
+./bin/terminalCD.sh
+node bin/watchLog.js
 ```
 
-Now your terminal cd changes, across all sessions, should be logged to:
+finally to view the gui, change to `app` directory and run `meteor` application:
 ```
-/var/log/terminal-cd.log
+cd app
+meteor
 ```
 
 # q[ -_-]p
