@@ -1,0 +1,26 @@
+<head>
+  <title>Todo List</title>
+</head>
+
+<body>
+  <div class="container">
+
+    <header>
+      <h1>Todo List</h1>
+    </header>
+
+    <ul>
+      {{#each dirChanges}}
+        {{> listDirChanges}}
+      {{/each}}
+    </ul>
+
+  </div>
+</body>
+
+
+<template name="listDirChanges">
+
+  <li>{{dir}}</li>
+
+</template>
