@@ -1,4 +1,4 @@
-#! /usr/bin/node
+#!/usr/bin/env node
 
 //mongodb://127.0.0.1:3001/meteor
 // Retrieve
