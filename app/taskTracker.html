@@ -6,21 +6,36 @@
   <div class="container">
 
     <header>
-      <h1>Todo List</h1>
+      <h1>taskTracker</h1>
     </header>
 
-    <ul>
+    <p>
+      The x axis represents the seconds that folder has been active<br/>
+      The y axis represents dates over time.
+    </p>
+
+    {{> chart}}
+
+    <dl>
       {{#each dirChanges}}
         {{> listDirChanges}}
       {{/each}}
-    </ul>
+    </dl>
 
   </div>
 </body>
 
+<template name="chart">
+  <div class="timeline-wrapper">
+
+  </div>
+</template>
 
 <template name="listDirChanges">
 
-  <li>{{dateTime}} ----- {{dir}}</li>
+    <dt>{{dir}}</dt>
+    <dd>{{dateTime}}</dd>
+    <dd>{{dateTimeEnd}}</dd>
+    <dd>{{duration}}</dd>
 
 </template>
