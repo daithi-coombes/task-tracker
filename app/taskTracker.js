@@ -1,6 +1,12 @@
 DirChanges = new Mongo.Collection("dirChanges")
+Calendars = new Mongo.Collection("calendars")
 
 if (Meteor.isClient) {
+
+  Template.Calendar.rendered = function(){
+
+    scheduler.init("scheduler_here", new Date());
+  }
 
   Template.body.helpers({
 
@@ -21,6 +27,18 @@ if (Meteor.isServer) {
   Meteor.startup(function () {
   });
 }
+
+
+/**
+ * Routing
+ */
+Router.route('/', function(){
+  this.render('Home')
+})
+Router.route('calendar', function(){
+  this.render('Calendar')
+})
+
 
 /**
  * Parse Records.

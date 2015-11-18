@@ -21,3 +21,7 @@ ejson
 spacebars
 check
 d3
+iron:router
+huttonr:bootstrap3
+momentjs:moment
+dhtmlx:scheduler-data
