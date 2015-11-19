@@ -32,28 +32,35 @@ router.get('/', function(req, res, next) {
 router.post('/addTask', function(req, res){
 
   var db = req.db,
-    collection = db.get('tasks')
+    collection = db.get('tasks'),
+    days = req.body.days
 
-  var start = moment(req.body.startDateTime, "DD/MM/YYYY HH:mm"),
-    end = moment(req.body.endDateTime, "DD/MM/YYYY HH:mm")
+  console.log(req.body);
 
-  var record = {
-    "title": req.body.taskTitle,
-    "start": start.utc().format(),
-    "end": end.utc().format(),
-    "projectID": req.body.project
+  for(var x=1; x<=days; x++){
+    var start = moment(req.body['date-'+x]+' '+req.body['start-'+x], "DD/MM/YYYY HH:mm"),
+      end = moment(req.body['date-'+x]+' '+req.body['end-'+x], "DD/MM/YYYY HH:mm")
+
+    var record = {
+      "title": req.body.taskTitle,
+      "start": start.utc().format(),
+      "end": end.utc().format(),
+      "projectID": req.body.project
+    }
+    //console.log(record)
+
+    collection.insert(record, function(err, doc){
+      if(err){
+        //console.log(err)
+        res.send("There was an error")
+      }else{
+        console.log('inserted:')
+        console.log(record)
+      }
+    })
   }
 
-  collection.insert(record, function(err, doc){
-    if(err){
-      console.log(err)
-      res.send("There was an error")
-    }else{
-      console.log('inserted:')
-      console.log(record)
-      res.redirect("/")
-    }
-  })
+  res.redirect("/")
 });
 
 

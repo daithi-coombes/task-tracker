@@ -37,6 +37,7 @@ $(document).ready(function(){
 
       //foreach day add inputs
       $('#dateTimeContainer').html('');
+      $('input[name="days"]', '#taskModal').val(days);
       var now = s;
       for(var x=1; x<=days; x++){
 
@@ -62,7 +63,10 @@ $(document).ready(function(){
       }
 
       $('#taskModal').on('shown.bs.modal', function(){
-        $('.timepicker').timepicker();
+        $('.timepicker').timepicker({
+          showMeridian: false,
+          maxHours: 24
+        });
         $('.datepicker').datepicker();
       })
       $('#taskModal').on('hidden.bs.modal', function(){
