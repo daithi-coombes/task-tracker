@@ -14,6 +14,10 @@ var mongo = require('mongodb')
   ,monk = require('monk')
   ,db = monk('localhost:27017/meteor')
 
+
+/** watch terminal-cd.log file */
+var watchLog = require('./lib/watchLog')
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');

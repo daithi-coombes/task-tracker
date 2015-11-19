@@ -14,9 +14,9 @@ block content
           button(type="button", class="close", data-dismiss="modal", aria-label="Close")
             span(aria-hidden="true") &times;
           h4.modal-title Add Hours
-        div.modal-body
+        form(class="form-horizontal", action="/addTask", method="post")
+          div.modal-body
 
-          form.form-horizontal
             div.form-group
               label(class="col-md-4 control-label", for="taskTitle") Task
               div.col-md-6
@@ -38,6 +38,6 @@ block content
                   span.input-group-addon
                     span.glyphicon.glyphicon-calendar
 
-        div.modal-footer
-          button(type="button", class="btn btn-default", data-dismiss="modal") Close
-          button(type="button", class="btn btn-primary") Save changes
+          div.modal-footer
+            button(type="button", class="btn btn-default", data-dismiss="modal") Close
+            input(type="submit", class="btn btn-primary", value="Save changes")
