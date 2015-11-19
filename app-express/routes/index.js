@@ -18,8 +18,6 @@ router.get('/', function(req, res, next) {
 /* Handle addTask submit */
 router.post('/addTask', function(req, res){
 
-  console.log(req.body);
-
   var db = req.db,
     collection = db.get('tasks')
 
