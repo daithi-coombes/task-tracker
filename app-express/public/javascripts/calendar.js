@@ -60,6 +60,7 @@ $(document).ready(function(){
 
       $('#taskModal').on('shown.bs.modal', function(){
         $('.timepicker').timepicker();
+        $('.datepicker').datepicker();
       })
       $('#taskModal').modal('show');
     },
@@ -71,8 +72,8 @@ $(document).ready(function(){
   var opts = {
     format: 'DD/MM/YYYY HH:mm'             //format for Irish users, internally it is YYYY-MM-DDTHH:MM:SS
   };
-  $('#startDateTime').datetimepicker(opts);
-  $('#endDateTime').datetimepicker(opts);
+  //$('#startDateTime').datetimepicker(opts);
+  //$('#endDateTime').datetimepicker(opts);
 
 })
 
