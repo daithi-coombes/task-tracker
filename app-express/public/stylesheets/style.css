@@ -12,6 +12,14 @@ a {
   background: transparent !important;
 }
 
+/** form inputs for cloning dynamic task start/end days */
+#taskDateTime{
+  display: none;
+}
+.bootstrap-timepicker-widget{
+  z-index: 1112 !important;
+}
+
 /** calendar select box */
 .selection {
 	position: absolute;

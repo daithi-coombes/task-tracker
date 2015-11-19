@@ -7,6 +7,26 @@ block content
 
   div#calendar
 
+  div#projectModal.modal.fade
+    div.modal-dialog
+      div.modal-content
+        div.modal-header
+          button(type="button", class="close", data-dismiss="modal", aria-label="Close")
+            span(aria-hidden="true") &times;
+          h4.modal-title Projects
+        form(class="form-horizontal", action="/crudProject", method="post")
+          div.modal-body
+
+            div.form-group
+              label(class="col-md-4 control-label", for="projectTitle") Title
+              div.col-md-6
+                input(id="projectTitle", name="projectTitle", placeholder="enter title", class="form-control input-md", required="", type="text")
+
+          div.modal-footer
+            button(type="button", class="btn btn-default", data-dismiss="modal") Close
+            input(type="submit", class="btn btn-primary", value="Add Project")
+
+
   div#taskModal.modal.fade
     div.modal-dialog
       div.modal-content
@@ -23,21 +43,46 @@ block content
                 input(id="taskTitle", name="taskTitle", placeholder="enter task", class="form-control input-md", required="", type="text")
 
             div.form-group
-              label(class="col-md-4 control-label", for="startDateTime") Start
+              label(class="col-md-4 control-label", for="project") Project
               div.col-md-6
-                div#startDateTime.input-group
-                  input(name="startDateTime", class="form-control", placeholder="enter start", required="", type="text")
-                  span.input-group-addon
-                    span.glyphicon.glyphicon-calendar
+                select(name="project", class="form-control")
+                  option none
+                  for project in projects
+                    option(value="#{project._id}") #{project.title}
 
             div.form-group
-              label(class="col-md-4 control-label", for="endDateTime") end
-              div.col-md-6
-                div#endDateTime.input-group
-                  input(name="endDateTime", class="form-control", placeholder="enter end", type="text")
-                  span.input-group-addon
-                    span.glyphicon.glyphicon-calendar
+              label(class="col-md-4 control-label") date
+              label(class="col-md-4 control-label") start
+              label(class="col-md-4 control-label") end
+
+            div#dateTimeContainer
 
           div.modal-footer
             button(type="button", class="btn btn-default", data-dismiss="modal") Close
             input(type="submit", class="btn btn-primary", value="Save changes")
+
+
+  <!-- display:none -->
+  div#taskDateTime
+    div.form-group
+      div.col-md-6
+        div.input-group
+          input(name="date", class="form-control datepicker", placeholder="enter start", required="", type="text")
+          span.input-group-addon
+            span.glyphicon.glyphicon-calendar
+      div.col-md-3
+        div.input-group
+          input(name="start", class="form-control timepicker", placeholder="enter start", required="", type="text")
+          span.input-group-addon
+            span.glyphicon.glyphicon-calendar
+      div.col-md-3
+        div.input-group
+          input(name="end", class="form-control timepicker", placeholder="enter start", required="", type="text")
+          span.input-group-addon
+            span.glyphicon.glyphicon-calendar
+  <!-- end display:none -->
+          
+  script(type='text/javascript').
+    var events = !{JSON.stringify(events)}
+    var projects = !{JSON.stringify(projects)}
+    var dbError = !{JSON.stringify(dbError)}

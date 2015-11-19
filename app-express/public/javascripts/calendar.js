@@ -5,22 +5,63 @@ $(document).ready(function(){
    * Load fullcalendar.
    */
   $('#calendar').fullCalendar({
+    /*events: [
+      {
+        title: 'foobar',
+        start: '2015-11-18T09:30:00',
+        end: '2015-11-18T17:30:00'
+      }
+    ],*/
+    events: events,
+    customButtons: {
+      crudProjects: {
+        text: 'Projects',
+        click: function(){
+          $('#projectModal').modal();
+        }
+      }
+    },
     header: {
-      left: 'prev,next today',
+      left: 'prev,next today crudProjects',
       center: 'title',
       right: 'month,agendaWeek,agendaDay'
     },
     selectable: true,
     select: function(start, end, allDay, ev){
 
-      var s = start._d,
-        e = end._d;
+      var s = moment(start._d),
+        e = moment(end._d);
 
-      var startStr = s.getDate()+'/'+(s.getMonth()+1)+'/'+s.getFullYear()+' '+s.getHours()+':'+('0'+s.getMinutes()).slice(-2);
-      var endStr = e.getDate()+'/'+(e.getMonth()+1)+'/'+e.getFullYear()+' '+e.getHours()+':'+('0'+e.getMinutes()).slice(-2);
-      $('input[name=startDateTime]').val(startStr);
-      $('input[name=endDateTime]').val(endStr);
-      $('#taskModal').modal();
+      //work out start/end times across days
+      var days = end.diff(start, 'days')+1;
+
+      //foreach day add inputs
+      $('#dateTimeContainer').html('');
+      var now = s;
+      for(var x=1; x<=days; x++){
+
+        var container = $('#taskDateTime').clone(true)
+          .find('.form-group');
+
+        $(container).find('input[name=date]')
+          .attr('name', 'date-'+x)
+          .attr('value', now.format('DD/MM/YYYY'));
+        $(container).find('input[name=start]')
+          .attr('name', 'start-'+x)
+          .attr('value', s.format('HH:mm'));
+        $(container).find('input[name=end]')
+          .attr('name', 'end-'+x)
+          .attr('value', e.format('HH:mm'));
+
+        $('#dateTimeContainer').append(container);
+
+        var now = moment(start._d).add(x, 'days');
+      }
+
+      $('#taskModal').on('shown.bs.modal', function(){
+        $('.timepicker').timepicker();
+      })
+      $('#taskModal').modal('show');
     },
     defaultView: 'agendaWeek'
   });
@@ -28,7 +69,7 @@ $(document).ready(function(){
 
 
   var opts = {
-    format: 'DD/MM/YYYY h:mm'
+    format: 'DD/MM/YYYY HH:mm'             //format for Irish users, internally it is YYYY-MM-DDTHH:MM:SS
   };
   $('#startDateTime').datetimepicker(opts);
   $('#endDateTime').datetimepicker(opts);
