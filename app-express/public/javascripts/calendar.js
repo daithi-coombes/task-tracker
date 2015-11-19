@@ -44,12 +44,15 @@ $(document).ready(function(){
           .find('.form-group');
 
         $(container).find('input[name=date]')
+          .addClass('datepicker')
           .attr('name', 'date-'+x)
           .attr('value', now.format('DD/MM/YYYY'));
         $(container).find('input[name=start]')
+          .addClass('timepicker')
           .attr('name', 'start-'+x)
           .attr('value', s.format('HH:mm'));
         $(container).find('input[name=end]')
+          .addClass('timepicker')
           .attr('name', 'end-'+x)
           .attr('value', e.format('HH:mm'));
 
@@ -61,6 +64,9 @@ $(document).ready(function(){
       $('#taskModal').on('shown.bs.modal', function(){
         $('.timepicker').timepicker();
         $('.datepicker').datepicker();
+      })
+      $('#taskModal').on('hidden.bs.modal', function(){
+        $('#dateTimeContainer').html('');
       })
       $('#taskModal').modal('show');
     },
