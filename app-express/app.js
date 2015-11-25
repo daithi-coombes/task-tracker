@@ -1,19 +1,31 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+var express     = require('express')
+  ,bayes        = require('bayes')
+  ,path         = require('path')
+  ,favicon      = require('serve-favicon')
+  ,logger       = require('morgan')
+  ,cookieParser = require('cookie-parser')
+  ,bodyParser   = require('body-parser')
+  ,routes       = require('./routes/index')
+  ,users        = require('./routes/users')
+  ,mongo        = require('mongodb')
+  ,monk         = require('monk')
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+var app        = express()
+  ,classifier  = bayes()
+  ,db          = monk('localhost:27017/meteor')
 
-var app = express();
 
-var mongo = require('mongodb')
-  ,monk = require('monk')
-  ,db = monk('localhost:27017/meteor')
+classifier.learn('amazing, awesome movie!! Yeah!! Oh Boy.', 'positive')
+classifier.learn('Sweet, this is incredibly, amazing, perfect, great!!', 'positive')
 
+classifier.learn('terrivle, shitty thing. Damn. Sucks!!', 'negative')
+
+classifier.categorize('awesome, cool, amazing!! Yay.')
+
+var stateJson = classifier.toJson()
+var revivedClassifier = bayes.fromJson(stateJson)
+
+console.log(revivedClassifier)
 
 /** watch terminal-cd.log file */
 var watchLog = require('./lib/watchLog')
