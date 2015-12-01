@@ -1,7 +1,10 @@
 var express = require('express')
-  ,moment = require('moment')
+  fs        = require('fs')
+  ,moment   = require('moment')
+  ,multer   = require('multer')
 
-var router = express.Router()
+var router = express.Router(),
+  upload   = multer({dest: './uploads/'})
 
 
 /* GET home page. */
@@ -27,6 +30,23 @@ router.get('/', function(req, res, next) {
   })
 });
 
+
+/* GET manicTime page */
+router.get('/manicTime', function routerManicTime(req, res, next){
+  res.render('manicTime', {
+    title: 'taskTracker - manicTime'
+  })
+})
+
+router.post('/manicTime/upload', upload.single('csv'), function routerManicTimeUpload(req, res, next){
+
+  var oldName = './'+req.file.path,
+    newName = './uploads/'+req.file.originalname
+
+  fs.renameSync(oldName, newName)
+  res.redirect('/manicTime?msg=file uploaded successfully')
+  next()
+})
 
 /* Handle addTask submit */
 router.post('/addTask', function(req, res){

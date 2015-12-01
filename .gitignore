@@ -1,5 +1,7 @@
 bower_components
 node_modules
+app-express/uploads/*
+!app-express/uploads/.gitkeep
 
 npm-debug.log
 foo.*

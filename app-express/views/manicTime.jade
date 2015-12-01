@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  h1= title
+
+  p Parse manicTime exports
+  
+  form(class="form-horizontal", action="/manicTime/upload", method="post", enctype="multipart/form-data")
+    div.form-group
+      label(for="manicTimeCSV")
+      input(type="file", id="manicTimeCSV", name="csv")
+      p.help-block The main manicTime exported csv file
+    
+    input(type="submit", class="btn btn-default", value="upload csv")
+    
