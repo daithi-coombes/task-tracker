@@ -1,5 +1,6 @@
 $(document).ready(function(){
 
+  if(!events) var events = [];
 
   /**
    * Load fullcalendar.

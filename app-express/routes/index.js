@@ -1,5 +1,6 @@
-var express = require('express')
-  fs        = require('fs')
+var parse     = require('csv-parse')
+  ,express  = require('express')
+  ,fs       = require('fs')
   ,moment   = require('moment')
   ,multer   = require('multer')
 
@@ -33,8 +34,12 @@ router.get('/', function(req, res, next) {
 
 /* GET manicTime page */
 router.get('/manicTime', function routerManicTime(req, res, next){
+
   res.render('manicTime', {
-    title: 'taskTracker - manicTime'
+    title: 'taskTracker - manicTime',
+    files: [
+      'ManicTimeData_2015-11-27.csv'
+    ]
   })
 })
 
@@ -46,6 +51,22 @@ router.post('/manicTime/upload', upload.single('csv'), function routerManicTimeU
   fs.renameSync(oldName, newName)
   res.redirect('/manicTime?msg=file uploaded successfully')
   next()
+})
+router.post('/manicTime/parse', function parseManicTimeFile(req, res, next){
+
+  var file = req.body.file,
+    parser = parse({delimiter: ','}, function(err, data){
+      console.log(data)
+    })
+
+  fs.createReadStream('./uploads/'+file).pipe(parser)
+
+
+  //model the data
+  // _id, name, start, end, duration, process
+
+
+  res.end('[{msg:hi}]')
 })
 
 /* Handle addTask submit */
