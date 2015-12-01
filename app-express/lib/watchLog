@@ -3,9 +3,25 @@
 var watchLog = function(){
   //mongodb://127.0.0.1:3001/meteor
   // Retrieve
-  var MongoClient = require('mongodb').MongoClient,
-    Tail = require('always-tail'),
-    tail = new Tail('/var/log/terminal-cd.log', '\n')
+  var Util        = require('util')
+    ,MongoClient  = require('mongodb').MongoClient
+    ,Spawn        = require('child_process').spawn
+    ,Tail         = require('always-tail')
+
+  var tail = new Tail('/var/log/terminal-cd.log', '\n'),
+    writer = Spawn('/opt/taskTracker/bin/writeLog.sh')
+
+
+  //writer process callbacks
+  writer.stdout.on('data', function(data){
+    console.log('writeLog: '+data)
+  })
+  writer.stderr.on('data', function(data){
+    console.log('writeLog stderr: '+data)
+  })
+  writer.on('exit', function(code){
+    console.log('bin/writeLog.sh exited with code: '+code)
+  })
 
   // Connect to the db
   MongoClient.connect("mongodb://127.0.0.1:27017/meteor", function(err, db) {
