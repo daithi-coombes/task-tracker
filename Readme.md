@@ -14,17 +14,18 @@ shopt -s histappend
 export PROMPT_COMMAND="history -a;$PROMPT_COMMAND"
 ```
 
-next run the bash script that log changes to your terminal history
-and the node app to write those logs to the database
+next run bash script to write cd changes to logfile
 ```
 ./bin/writeLog.sh
 node bin/watchLog.js
 ```
 
-finally to view the gui, change to `app` directory and run `meteor` application:
+finally to view the gui, change to `app` directory and run the nodejs
+application.
 ```
-cd app
-meteor
+cd app-express
+npm install
+npm start
 ```
 
 For unique dirchanges (on some systems duplicate records are recored when new
