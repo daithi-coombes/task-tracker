@@ -10,6 +10,7 @@
     "always-tail": "~0.2.0",
     "csv": "^0.4.6",
     "csv-parse": "^1.0.1",
+    "moment": "^2.10.6",
     "mongodb": "~2.0.48"
   },
   "scripts": {

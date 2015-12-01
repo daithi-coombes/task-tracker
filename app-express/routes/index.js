@@ -54,9 +54,31 @@ router.post('/manicTime/upload', upload.single('csv'), function routerManicTimeU
 })
 router.post('/manicTime/parse', function parseManicTimeFile(req, res, next){
 
-  var file = req.body.file,
+  var db = req.db,
+    collection = db.get('manicTime'),
+    file = req.body.file,
     parser = parse({delimiter: ','}, function(err, data){
-      console.log(data)
+      console.log('**********************************')
+      console.log('* > starting parse....')
+
+      data.map(function(el, index, array){
+
+        var row = {
+          name: el[0],
+          start: moment(el[1], "DD/MM/YYYY HH:mm:ss").format(),
+          end: moment(el[2], "DD/MM/YYYY HH:mm:ss").format(),
+          duration: el[3],
+          process: el[4]
+        }
+
+        collection.insert(row, function(err, doc){
+          if(err)
+            console.log(err)
+          else
+            console.log(doc)
+        })
+
+      })
     })
 
   fs.createReadStream('./uploads/'+file).pipe(parser)
