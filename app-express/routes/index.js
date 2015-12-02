@@ -71,6 +71,9 @@ router.post('/manicTime/parse', function parseManicTimeFile(req, res, next){
           process: el[4]
         }
 
+        //keep data clean, skip following process's
+        var skip = ['ManicTime']
+
         collection.insert(row, function(err, doc){
           if(err)
             console.log(err)
@@ -89,6 +92,59 @@ router.post('/manicTime/parse', function parseManicTimeFile(req, res, next){
 
 
   res.end('[{msg:hi}]')
+})
+router.post('/manicTime/getSample', function routerManicTimeSample(req, res, next){
+
+  var db = req.db,
+    collection = db.get('manicTime'),
+    sampleSize = 500
+
+  collection.find({}, {limit: sampleSize}, function(err, docs){
+
+    docs.map(function(instance, index, docs){
+      var words = docs[index].name.split(/\b/g)
+      instance.name = []
+      words.map(function(word, i){
+        if(/^[a-z0-9]+$/i.test(word)){
+          instance.name.push(word)
+        }
+      })
+      docs[index] = instance
+    })
+
+    res.json(docs)
+    next()
+  })
+})
+
+
+/* GET data viz page */
+router.get('/viz', function routerGetViz(req, res, next){
+
+  var db = req.db,
+    collection = db.get("manicTime")
+
+  collection.count({}, function(err, count){
+    if(err)
+      res.end(err)
+
+    res.render('viz', {
+      title: 'taskTracker - data viz',
+      count: count
+    })
+    next()
+  })
+})
+router.get('/viz/getData', function routerVizData(req, res, next){
+
+  var db = req.db,
+    collection = db.get("manicTime")
+
+    collection.find({}, {}, function(err, docs){
+      //docs = [{"name":"foo"},{"name":"bar"}]
+      res.json(JSON.stringify(docs))
+      next()
+    })
 })
 
 /* Handle addTask submit */

@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1= title
+
+  input(value= count, name="count")
+  a#vizLoadData.btn.btn-default(href="#") load sample data
+  p data viz here
+
+  script(type="text/javascript").
+    //var records = !{records};
+    //alert('hi');
+    //console.log(records);

@@ -2,31 +2,47 @@ doctype html
 html
   head
     title= title
-    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css')
-    link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.4.0/fullcalendar.min.css')
-    link(rel='stylesheet', href='http://threedubmedia.com/inc/css/base.css')
+    link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/vendor/fullcalendar.min.css')
+    link(rel='stylesheet', href='/vendor/threedubmedia/base.css')
     link(rel='stylesheet', href='/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css')
     link(rel='stylesheet', href='/bower_components/bootstrap-timepicker/css/bootstrap-timepicker.min.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
 
-    script(src='https://code.jquery.com/jquery-2.1.4.min.js')
-    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js')
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js')
+    script(src='/bower_components/jquery/jquery.min.js')
+    script(src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
+    script(src='/bower_components/moment/min/moment.min.js')
     script(src='/javascripts/transition.js')
     script(src='/javascripts/collapse.js')
     script(src='/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')
     script(src='/bower_components/bootstrap-timepicker/js/bootstrap-timepicker.js')
-    script(src='http://threedubmedia.com/inc/js/jquery.event.drag-2.2.js')
-    script(src='http://threedubmedia.com/inc/js/jquery.event.drag.live-2.2.js')
-    script(src='http://threedubmedia.com/inc/js/jquery.event.drop-2.2.js')
-    script(src='http://threedubmedia.com/inc/js/jquery.event.drop.live-2.2.js')
-    script(src='http://threedubmedia.com/inc/js/excanvas.min.js')
-    script(src='//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.4.0/fullcalendar.min.js')
+    script(src='/bower_components/d3/d3.min.js')
+    script(src='/vendor/threedubmedia/jquery.event.drag-2.2.js')
+    script(src='/vendor/threedubmedia/jquery.event.drag.live-2.2.js')
+    script(src='/vendor/threedubmedia/jquery.event.drop-2.2.js')
+    script(src='/vendor/threedubmedia/jquery.event.drop.live-2.2.js')
+    script(src='/vendor/threedubmedia/excanvas.min.js')
+    script(src='/vendor/fullcalendar.min.js')
     script(src='/javascripts/calendar.js')
     script(src='/javascripts/manicTime.js')
+    script(src='/javascripts/viz.js')
   body
-    nav
-      div.nav
-        a(href="/", class="btn btn-default") home
-        a(href="/manicTime", class="btn btn-default") manicTime
-    block content
+    nav.navbar.navbar-default.navbar-fixed-top
+      div.container
+        div.navbar-header
+          button(type="button", class="navbar-toggle collapsed", data-toggle="collapse", data-target="#navbar", aria-expanded="false", aria-controls="navbar")
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand(href="#") taskTraker
+        div#navbar.navbar-collapse.collapse
+          ul.nav.navbar-nav
+            li
+              a(href="/") Home
+            li
+              a(href="/manicTime") manicTime
+            li
+              a(href="/viz") data viz
+    div.container
+      block content
