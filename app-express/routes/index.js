@@ -93,15 +93,22 @@ router.post('/manicTime/parse', function parseManicTimeFile(req, res, next){
 
   res.end('[{msg:hi}]')
 })
-router.post('/manicTime/getSample', function routerManicTimeSample(req, res, next){
+router.get('/manicTime/getSample', function routerManicTimeSample(req, res, next){
 
   var db = req.db,
     collection = db.get('manicTime'),
-    sampleSize = 500
+    sampleSize = req.query.sample || 100
 
-  collection.find({}, {limit: sampleSize}, function(err, docs){
+  //disable cors
+  res.set('Access-Control-Allow-Origin', '*')
 
+  //grab docs
+  collection.find({}, {limit: sampleSize, sort: ['start','asc']}, function(err, docs){
+
+    //prepare each docs
     docs.map(function(instance, index, docs){
+
+      //text
       var words = docs[index].name.split(/\b/g)
       instance.name = []
       words.map(function(word, i){
@@ -109,7 +116,18 @@ router.post('/manicTime/getSample', function routerManicTimeSample(req, res, nex
           instance.name.push(word)
         }
       })
-      docs[index] = instance
+
+      //datetime
+      var a = instance.duration.split(':'),
+        duration = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]),
+        start = moment(instance.start, "YYYY-MM-DD HH:mm:ss Z").format('YYYY-MM-DD HH:mm:ss')
+
+      //the doc
+      docs[index] = {
+        words: instance.name,
+        start: start,
+        duration: duration
+      }
     })
 
     res.json(docs)

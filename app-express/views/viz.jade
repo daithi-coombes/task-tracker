@@ -2,12 +2,13 @@ extends layout
 
 block content
   h1= title
+  p data corpus #{count} records
 
-  input(value= count, name="count")
-  a#vizLoadData.btn.btn-default(href="#") load sample data
-  p data viz here
+  div.row
+    div.col-xs-12
+      input(type="text", name="sampleSize", value="100")
+      a#vizLoadData.btn.btn-default(href="#") duration over dateTime
 
-  script(type="text/javascript").
-    //var records = !{records};
-    //alert('hi');
-    //console.log(records);
+  div.row
+    div.col-xs-12
+      div#durationDateTime

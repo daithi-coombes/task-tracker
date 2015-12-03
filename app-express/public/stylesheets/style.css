@@ -53,3 +53,20 @@ a {
 	background-color: #CEB;
 	border-color: #9B8;
 	}
+
+
+/**
+ * d3 line chars - \viz
+ */
+path {
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
