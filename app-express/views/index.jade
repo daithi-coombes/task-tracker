@@ -84,6 +84,6 @@ block content
   <!-- end display:none -->
           
   script(type='text/javascript').
-    var events = !{JSON.stringify(events)}
+    window.events = !{JSON.stringify(events)}
     var projects = !{JSON.stringify(projects)}
     var dbError = !{JSON.stringify(dbError)}

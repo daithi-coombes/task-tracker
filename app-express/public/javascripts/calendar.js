@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-  if(!events) var events = [];
+  if(!window.events) window.events = [];
 
   /**
    * Load fullcalendar.
@@ -8,12 +8,14 @@ $(document).ready(function(){
   $('#calendar').fullCalendar({
     /*events: [
       {
+        _id: '567ff2ff78c9a9060d27f8cc',
+        projectID: '567ff2ef78c9a9060d27f8cb',
         title: 'foobar',
-        start: '2015-11-18T09:30:00',
-        end: '2015-11-18T17:30:00'
+        start: '2015-12-28T09:30:00',
+        end: '2015-12-28T17:30:00'
       }
     ],*/
-    events: events,
+    events: window.events,
     customButtons: {
       crudProjects: {
         text: 'Projects',
@@ -29,7 +31,6 @@ $(document).ready(function(){
     },
     selectable: true,
     select: function(start, end, allDay, ev){
-
       var s = moment(start._d),
         e = moment(end._d);
 
