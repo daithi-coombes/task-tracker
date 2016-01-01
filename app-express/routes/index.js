@@ -24,6 +24,7 @@ router.get('/', function(req, res, next) {
       res.render('index', {
         title: 'taskTracker',
         events: events,
+        scripts: ['/javascripts/calendar.js'],
         projects: projects,
         dbError: err || e
       });
@@ -37,6 +38,7 @@ router.get('/manicTime', function routerManicTime(req, res, next){
 
   res.render('manicTime', {
     title: 'taskTracker - manicTime',
+    scripts: ['/javascripts/manicTime.js'],
     files: [
       'ManicTimeData_2015-11-27.csv'
     ]
@@ -99,6 +101,8 @@ router.get('/manicTime/getSample', function routerManicTimeSample(req, res, next
     collection = db.get('manicTime'),
     sampleSize = req.query.sample || 100
 
+  console.log(req.query.sample);
+
   //disable cors
   res.set('Access-Control-Allow-Origin', '*')
 
@@ -148,6 +152,7 @@ router.get('/viz', function routerGetViz(req, res, next){
 
     res.render('viz', {
       title: 'taskTracker - data viz',
+      scripts: ['/javascripts/viz.js'],
       count: count
     })
     next()
@@ -165,6 +170,14 @@ router.get('/viz/getData', function routerVizData(req, res, next){
     })
 })
 
+
+/* GET cdChanges page */
+router.get('/cdChanges', function routerGetCdChanges(req, res, next){
+  res.render('cdChanges',{
+    title: 'cdChanges'
+  })
+})
+
 /* Handle addTask submit */
 router.post('/addTask', function(req, res){
 
@@ -172,7 +185,9 @@ router.post('/addTask', function(req, res){
     collection = db.get('tasks'),
     days = req.body.days
 
-  console.log(req.body);
+  collection.find({},{}, function(err, doc){
+    console.log(doc);
+  })
 
   for(var x=1; x<=days; x++){
     var start = moment(req.body['date-'+x]+' '+req.body['start-'+x], "DD/MM/YYYY HH:mm"),
@@ -184,11 +199,10 @@ router.post('/addTask', function(req, res){
       "end": end.utc().format(),
       "projectID": req.body.project
     }
-    //console.log(record)
 
     collection.insert(record, function(err, doc){
       if(err){
-        //console.log(err)
+        console.log(err)
         res.send("There was an error")
       }else{
         console.log('inserted:')

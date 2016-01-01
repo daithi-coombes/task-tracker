@@ -10,115 +10,152 @@
  */
 $(document).ready(function loadViz(){
 
-  $('a#vizLoadData').on('click', viz.durationDateTime);
+  var viz = new Viz();
+
+  $('a#vizLoadData').on('click', function(e){viz.loadData(e);});
 })
 
 
 /**
  * @constructor
  */
-var viz = (function Viz(){
+var Viz = function Viz(){
 
-  var self = {};
+  this.data = null;
+  this.sampleSize = 100;
+}
 
-  /**
-   * draw line chart of duration over time.
-   * @param  {event} e The event.
-   */
-  self.durationDateTime = function(e){
-    e.preventDefault();
+/**
+ * load sample data.
+ * @param  {event} e The event
+ * @return {Viz|Error}   Returns self for chaining, else Error.
+ */
+Viz.prototype.loadData = function vizLoadData(e){
+  e.preventDefault();
 
-    var sampleSize = $('input[name="sampleSize"]').val() || 10;
+  var err = null,
+    self = this;
 
-    // Set the dimensions of the canvas / graph
-    var margin = {top: 30, right: 20, bottom: 50, left: 50},
-      width = 1000 - margin.left - margin.right,
-      height = 270 - margin.top - margin.bottom;
+  self.sampleSize = $('input[name="sampleSize"]').val() || 100;
 
-    // Set the ranges
-    var x = d3.time.scale().range([0, width]),
-      y = d3.scale.linear().range([height, 0]);
+  //grab data from endpoint
+  self.getData(err, function vizGetDataCB(err, data){
+    if(err)
+      throw new Error(err);
 
-    // Define the line
-    var valueline = d3.svg.line()
-      .x(function(d) { return x(d.start); })
-      .y(function(d) { return y(d.duration); });
+    self.data = data;
 
-    // Define the axes
-    var xAxis = d3.svg.axis().scale(x)
-      .orient("bottom").ticks(d3.time.minutes, 5);
+    self.drawChart()
+      .drawHarness();
+  })
 
-    var yAxis = d3.svg.axis().scale(y)
-      .orient("left").ticks(5);
+  return err | self;
+}
 
-    //get sample
-    d3.json("/manicTime/getSample?sample="+sampleSize, function(error, data) {
+/**
+ * Get json sample data from endpoint.
+ * @param  {Error}   err Error.
+ * @param  {Function} cb  callback.
+ * @return {Viz}       returns self for chaning.
+ */
+Viz.prototype.getData = function vizGetData(err, cb){
+  if(err)
+    throw new Error(err);
 
-      if(error)
-        throw new error
+    console.log(this);
+    d3.json("/manicTime/getSample?sample="+this.sampleSize, function(error, data) {
+      cb(error, data);
+    });
 
-      //if chart exists, update data & return
-      if($('#durationDateTime svg').attr('width')){
+  return err || self;
+}
 
-        // Scale the range of the data again
-      	x.domain(d3.extent(data, function(d) { return d.start; }));
-  	    y.domain([0, d3.max(data, function(d) { return d.duration; })]);
 
-        // Select the section we want to apply our changes to
-        var svg = d3.select("#durationDateTime").transition();
+Viz.prototype.drawHarness = function vizDrawHarness(err){
+  if(err)
+    throw new Error(err);
 
-        // Make the changes
-        svg.select(".line")   // change the line
-          .duration(750)
-          .attr("d", valueline(data));
-        svg.select(".x.axis") // change the x axis
-          .duration(750)
-          .call(xAxis);
-        svg.select(".y.axis") // change the y axis
-          .duration(750)
-          .call(yAxis);
+  console.log(this.data);
 
-        return;
-      }
+  return err || this;
+}
 
-      //else draw chart
-      else{
-        var svg = d3.select("#durationDateTime")
-          .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-          .append("g")
-            .attr("transform",
-                  "translate(" + margin.left + "," + margin.top + ")");
-      }
+/**
+ * draw line chart of duration over time.
+ * LineChart
+ * @param  {error} err The error.
+ */
+Viz.prototype.drawChart = function drawChart(err){
+  if(err)
+    throw new err;
 
-      data.forEach(function(d) {
-        d.start = d3.time.format("%Y-%m-%d %H:%M:%S").parse(d.start);
-        d.duration = +d.duration;
-      });
+  if(this.data==null)
+    throw new Error('Sample data {this.data} is empty!');
 
-      // Scale the range of the data
-      x.domain(d3.extent(data, function(d) { return d.start; }));
-      y.domain([0, d3.max(data, function(d) { return d.duration; })]);
+  // Set the dimensions of the canvas / graph
+  var margin = {top: 30, right: 20, bottom: 50, left: 50},
+    width = 1000 - margin.left - margin.right,
+    height = 270 - margin.top - margin.bottom;
 
-      // Add the valueline path.
-      svg.append("path")
-        .attr("class", "line")
-        .attr("d", valueline(data));
+  // Set the ranges
+  var x = d3.time.scale().range([0, width]),
+    y = d3.scale.linear().range([height, 0]);
 
-      // Add the X Axis
-      svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
+  // Define the axes
+  var xAxis = d3.svg.axis().scale(x)
+    .orient("bottom").ticks(d3.time.minutes, 5);
+  var yAxis = d3.svg.axis().scale(y)
+    .orient("left").ticks(5);
 
-      // Add the Y Axis
-      svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis);
+  var valueline = d3.svg.line()
+    .x(function(d){ return x(d.start); })
+    .y(function(d){ return y(d.duration); });
 
+
+  var tip = d3.tip()
+    .attr('class', 'd3-tip')
+    .offset([-10, 0])
+    .html(function(d) {
+      return "<strong>Frequency:</strong> <span style='color:red'>frequency_here</span>";
     })
-  }
 
-  return self;
-})();
+  var svg = d3.select("#durationDateTime")
+    .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+  svg.call(tip);
+
+  this.data.forEach(function(d) {
+    d.start = d3.time.format("%Y-%m-%d %H:%M:%S").parse(d.start);
+    d.duration = +d.duration;
+  });
+
+  // Scale the range of the data
+  x.domain(d3.extent(this.data, function(d) { return d.start; }));
+  y.domain([0, d3.max(this.data, function(d) { return d.duration; })]);
+
+  // Add the valueline path.
+  svg.append("path")
+    .attr("class", "line")
+    .attr("d", valueline(this.data))
+    .on('mouseover', function(){
+      console.log(arguments);
+    })
+
+  // Add the X Axis
+  svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
+
+  // Add the Y Axis
+  svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis);
+
+  return err || this;
+}

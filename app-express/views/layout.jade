@@ -8,6 +8,10 @@ html
     link(rel='stylesheet', href='/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css')
     link(rel='stylesheet', href='/bower_components/bootstrap-timepicker/css/bootstrap-timepicker.min.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
+    - if (typeof(styles)!=='undefined'){
+      - each s in styles
+        link(rel='stylesheet', href= s)
+    - }
 
     script(src='/bower_components/jquery/jquery.min.js')
     script(src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
@@ -17,15 +21,17 @@ html
     script(src='/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')
     script(src='/bower_components/bootstrap-timepicker/js/bootstrap-timepicker.js')
     script(src='/bower_components/d3/d3.js')
+    script(src='/bower_components/d3-tip/index.js')
     script(src='/vendor/threedubmedia/jquery.event.drag-2.2.js')
     script(src='/vendor/threedubmedia/jquery.event.drag.live-2.2.js')
     script(src='/vendor/threedubmedia/jquery.event.drop-2.2.js')
     script(src='/vendor/threedubmedia/jquery.event.drop.live-2.2.js')
     script(src='/vendor/threedubmedia/excanvas.min.js')
     script(src='/vendor/fullcalendar.min.js')
-    script(src='/javascripts/calendar.js')
-    script(src='/javascripts/manicTime.js')
-    script(src='/javascripts/viz.js')
+    - if (typeof(scripts)!=='undefined'){
+      - each s in scripts
+        script(type='text/javascript', src= s)
+    - }
   body
     nav.navbar.navbar-default.navbar-fixed-top
       div.container
@@ -44,5 +50,7 @@ html
               a(href="/manicTime") manicTime
             li
               a(href="/viz") data viz
+            li
+              a(href="/cdChanges") cdChanges
     div.container
       block content
