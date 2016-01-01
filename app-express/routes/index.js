@@ -15,11 +15,20 @@ router.get('/', function(req, res, next) {
 
   var tasks = db.get('tasks')
 
+  //get events
   tasks.find({},{},function(e,events){
 
     var projects = db.get('projects'),
       err = e
 
+    //format dateTime for jquery calendar
+    events.map(function(event, i, events){
+      event.start = moment(event.start).utc().format().replace(/\+.+/, '')
+      event.end = moment(event.end).utc().format().replace(/\+.+/, '')
+      return event
+    })
+
+    //get projects
     projects.find({},{},function(e,projects){
       res.render('index', {
         title: 'taskTracker',
@@ -30,7 +39,7 @@ router.get('/', function(req, res, next) {
       });
     })
   })
-});
+})
 
 
 /* GET manicTime page */

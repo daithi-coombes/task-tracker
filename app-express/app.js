@@ -12,9 +12,12 @@ var express     = require('express')
 
 var app        = express()
   ,classifier  = bayes()
-  ,db          = monk('localhost:27017/meteor')
+  ,db          = monk('localhost:27017/taskTracker')
 
 
+/**
+ * Machine Learning.
+ */
 classifier.learn('amazing, awesome movie!! Yeah!! Oh Boy.', 'positive')
 classifier.learn('Sweet, this is incredibly, amazing, perfect, great!!', 'positive')
 
@@ -25,7 +28,9 @@ classifier.categorize('awesome, cool, amazing!! Yay.')
 var stateJson = classifier.toJson()
 var revivedClassifier = bayes.fromJson(stateJson)
 
-console.log(revivedClassifier)
+//console.log(revivedClassifier)
+// end Machine Learning
+
 
 /** watch terminal-cd.log file */
 var watchLog = require('./lib/watchLog')
