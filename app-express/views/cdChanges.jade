@@ -2,3 +2,6 @@ extends layout
 
 block content
   h1= title
+
+  script(type='text/javascript').
+    var dirChanges = !{JSON.stringify(dirChanges)}

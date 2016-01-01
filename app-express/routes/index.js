@@ -173,8 +173,33 @@ router.get('/viz/getData', function routerVizData(req, res, next){
 
 /* GET cdChanges page */
 router.get('/cdChanges', function routerGetCdChanges(req, res, next){
-  res.render('cdChanges',{
-    title: 'cdChanges'
+
+  var db = req.db,
+    collection = db.get('dirChanges')
+
+  collection.find({dateTime:{$type:2}}, {limit: 10000, sort: {dateTime: 1}}, function(err, dirChanges){
+
+    dirChanges.forEach(function(dirChange){
+
+      var date = new Date(dirChange.dateTime.split(',')[0])
+
+      var record = {
+        dateTime: date,
+        dir: dirChange.dir
+      }
+
+      collection.updateById(dirChange._id, record, function(err){
+        if(err) throw err
+        console.log('updated: '+dirChange._id)
+        console.log('\t'+dirChange.dateTime)
+        console.log('\t'+date)
+      })
+    })
+
+    res.render('cdChanges',{
+      dirChanges: dirChanges,
+      title: 'cdChanges'
+    })
   })
 })
 
