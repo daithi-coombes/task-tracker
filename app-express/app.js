@@ -11,8 +11,9 @@ var express     = require('express')
   ,monk         = require('monk')
 
 var app        = express()
+  ,config      = require('./config.js')
   ,classifier  = bayes()
-  ,db          = monk('localhost:27017/taskTracker')
+  ,db          = monk(config.host+':'+config.port+'/'+config.dbName)
 
 
 /**
@@ -34,6 +35,7 @@ var revivedClassifier = bayes.fromJson(stateJson)
 
 /** watch terminal-cd.log file */
 var watchLog = require('./lib/watchLog')
+watchLog()
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

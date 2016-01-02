@@ -186,7 +186,9 @@ router.get('/cdChanges', function routerGetCdChanges(req, res, next){
   var db = req.db,
     collection = db.get('dirChanges')
 
-  collection.find({dateTime:{$type:2}}, {limit: 10000, sort: {dateTime: 1}}, function(err, dirChanges){
+  collection.find({dateTime:{$type:2}}, function(err, dirChanges){
+
+    console.log(dirChanges)
 
     dirChanges.forEach(function(dirChange){
 

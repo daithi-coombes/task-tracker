@@ -3,7 +3,8 @@
 var watchLog = function(){
   //mongodb://127.0.0.1:3001/meteor
   // Retrieve
-  var Util        = require('util')
+  var Config      = require('../config.js')
+    ,Util         = require('util')
     ,MongoClient  = require('mongodb').MongoClient
     ,Spawn        = require('child_process').spawn
     ,Tail         = require('always-tail')
@@ -24,7 +25,8 @@ var watchLog = function(){
   })
 
   // Connect to the db
-  MongoClient.connect("mongodb://127.0.0.1:27017/meteor", function(err, db) {
+  debugger;
+  MongoClient.connect("mongodb://"+Config.host+":"+Config.port+"/"+Config.dbName, function(err, db) {
     if(err) return console.dir(err)
 
     var collection = db.collection('dirChanges')
@@ -48,4 +50,4 @@ var watchLog = function(){
   return MongoClient;
 }
 
-module.exports = watchLog();
+module.exports = watchLog;
