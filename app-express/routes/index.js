@@ -1,12 +1,16 @@
 var parse     = require('csv-parse')
+  ,config   = require('../config.js')
   ,express  = require('express')
   ,fs       = require('fs')
   ,moment   = require('moment')
+  ,mongoose = require('mongoose')
   ,multer   = require('multer')
 
 var router = express.Router(),
   upload   = multer({dest: './uploads/'})
 
+mongoose.connect(config.host+':'+config.port+'/'+config.dbName)
+var Project = require('../models/Project')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -152,20 +156,15 @@ router.get('/manicTime/getSample', function routerManicTimeSample(req, res, next
 /* GET data viz page */
 router.get('/viz', function routerGetViz(req, res, next){
 
-  var db = req.db,
-    collection = db.get("manicTime")
-
-  collection.count({}, function(err, count){
-    if(err)
-      res.end(err)
+  Project.find(function(err, projects){
 
     res.render('viz', {
       title: 'taskTracker - data viz',
       scripts: ['/javascripts/viz.js'],
-      count: count
+      projects: projects
     })
-    next()
   })
+
 })
 router.get('/viz/getData', function routerVizData(req, res, next){
 

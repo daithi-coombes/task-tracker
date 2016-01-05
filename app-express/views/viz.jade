@@ -2,17 +2,12 @@ extends layout
 
 block content
   h1= title
-  p data corpus #{count} records
-
-  div.row
-    div.col-xs-12
-      input(type="text", name="sampleSize", value="100")
-      a#vizLoadData.btn.btn-default(href="#") load sample data
-
-  div.row
-    div.col-xs-12
-      textarea(name="sampleData", cols="100", rows="15")
-
-  div.row
-    div.col-xs-12
-      div#durationDateTime
+  
+  .row
+    .col-md-12
+      ul
+        each val in projects.length ? projects: ['There are no projects']
+          li(id="#{val._id}")= val.title
+      
+  script(type="text/javascript").
+    var projects = !{JSON.stringify(projects)}
