@@ -11,9 +11,11 @@ var router = express.Router(),
 
 
 // models
-mongoose.connect(config.db.host+':'+config.db.port+'/'+config.db.dbName)
-var Project = require('../models/Project')
-  ,Task     = require('../models/Task')
+var mongoose = mongoose.connect(config.db.host+':'+config.db.port+'/'+config.db.dbName)
+  ,conn       = mongoose.connection
+  ,ObjectID   = require('mongoose').ObjectID
+  ,Project    = require('../models/Project')
+  ,Task       = require('../models/Task')
 //end models
 
 
@@ -214,37 +216,34 @@ router.get('/cdChanges', function routerGetCdChanges(req, res, next){
 /* Handle addTask submit */
 router.post('/addTask', function(req, res){
 
-  var db = req.db,
-    collection = db.get('tasks'),
-    days = req.body.days
-
-  collection.find({},{}, function(err, doc){
-    console.log(doc);
-  })
+  var days = req.body.days
+    console.log(ObjectID)//new ObjectID()
 
   for(var x=1; x<=days; x++){
     var start = moment(req.body['date-'+x]+' '+req.body['start-'+x], "DD/MM/YYYY HH:mm"),
       end = moment(req.body['date-'+x]+' '+req.body['end-'+x], "DD/MM/YYYY HH:mm")
 
-    var record = {
+    var task = new Task({
       "title": req.body.taskTitle,
       "start": start.utc().format(),
       "end": end.utc().format(),
       "projectID": req.body.project
-    }
+    })
 
-    collection.insert(record, function(err, doc){
+    Task.create(task, function(err){
       if(err){
         console.log(err)
-        res.send("There was an error")
+        res.json({
+          error: err
+        })
       }else{
-        console.log('inserted:')
-        console.log(record)
+        console.log(task._id)
+        res.json({
+          ok: true
+        })
       }
     })
   }
-
-  res.redirect("/")
 });
 
 

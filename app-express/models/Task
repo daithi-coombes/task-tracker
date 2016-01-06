@@ -4,8 +4,10 @@ var mongoose = require('mongoose'),
   Schema = mongoose.Schema
 
 var taskSchema = new Schema({
-  _id: Object,
-  title: String
+  title: String,
+  start: Date,
+  end: Date,
+  projectID: Object
 })
 
 var Task = mongoose.model('tasks', taskSchema)
