@@ -1,4 +1,5 @@
 var express     = require('express')
+  ,api          = require('./routes/api')
   ,bayes        = require('bayes')
   ,path         = require('path')
   ,favicon      = require('serve-favicon')
@@ -8,12 +9,10 @@ var express     = require('express')
   ,routes       = require('./routes/index')
   ,users        = require('./routes/users')
   ,mongo        = require('mongodb')
-  ,monk         = require('monk')
 
 var app        = express()
   ,config      = require('./config.js')
   ,classifier  = bayes()
-  ,db          = monk(config.host+':'+config.port+'/'+config.dbName)
 
 
 /**
@@ -42,7 +41,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -50,7 +49,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function(req,res,next){
-  req.db = db
+  //req.db = db
   next()
 })
 

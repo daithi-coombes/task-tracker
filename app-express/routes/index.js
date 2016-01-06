@@ -9,21 +9,19 @@ var parse     = require('csv-parse')
 var router = express.Router(),
   upload   = multer({dest: './uploads/'})
 
-mongoose.connect(config.host+':'+config.port+'/'+config.dbName)
+
+// models
+mongoose.connect(config.db.host+':'+config.db.port+'/'+config.db.dbName)
 var Project = require('../models/Project')
+  ,Task     = require('../models/Task')
+//end models
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
 
-  var db = req.db
-
-  var tasks = db.get('tasks')
-
   //get events
-  tasks.find({},{},function(e,events){
-
-    var projects = db.get('projects'),
-      err = e
+  Task.find({}, function(err,events){
 
     //format dateTime for jquery calendar
     events.map(function(event, i, events){
@@ -33,7 +31,7 @@ router.get('/', function(req, res, next) {
     })
 
     //get projects
-    projects.find({},{},function(e,projects){
+    Project.find({}, function(e,projects){
       res.render('index', {
         title: 'taskTracker',
         events: events,
