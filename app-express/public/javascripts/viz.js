@@ -14,6 +14,9 @@ $(document).ready(function loadViz(){
     projects: projects
   });
 
+  //get project hours for this week
+  viz.projectGetWeekHours()
+
 })
 
 
@@ -23,6 +26,20 @@ $(document).ready(function loadViz(){
 var Viz = function Viz(data){
 
   this.projects = data.projects
+}
+
+Viz.prototype.projectGetWeekHours = function vizProjectGetWeekHours(){
+
+  //query api
+  $.get(
+    '/api/project/hours/week',
+    function(json){
+
+      
+      console.log(json)
+    },
+    'json'
+  )
 }
 
 /**

@@ -6,6 +6,7 @@
     "start": "nodemon ./bin/www"
   },
   "dependencies": {
+    "async": "^1.5.1",
     "bayes": "0.0.4",
     "body-parser": "^1.13.3",
     "bower": "^1.7.1",
