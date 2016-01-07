@@ -217,7 +217,6 @@ router.get('/cdChanges', function routerGetCdChanges(req, res, next){
 router.post('/addTask', function(req, res){
 
   var days = req.body.days
-    console.log(ObjectID)//new ObjectID()
 
   for(var x=1; x<=days; x++){
     var start = moment(req.body['date-'+x]+' '+req.body['start-'+x], "DD/MM/YYYY HH:mm"),
