@@ -9,21 +9,21 @@ var parse     = require('csv-parse')
 var router = express.Router(),
   upload   = multer({dest: './uploads/'})
 
-mongoose.connect(config.host+':'+config.port+'/'+config.dbName)
-var Project = require('../models/Project')
+
+// models
+var mongoose = mongoose.connect(config.db.host+':'+config.db.port+'/'+config.db.dbName)
+  ,conn       = mongoose.connection
+  ,ObjectID   = require('mongoose').ObjectID
+  ,Project    = require('../models/Project')
+  ,Task       = require('../models/Task')
+//end models
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
 
-  var db = req.db
-
-  var tasks = db.get('tasks')
-
   //get events
-  tasks.find({},{},function(e,events){
-
-    var projects = db.get('projects'),
-      err = e
+  Task.find({}, function(err,events){
 
     //format dateTime for jquery calendar
     events.map(function(event, i, events){
@@ -33,7 +33,7 @@ router.get('/', function(req, res, next) {
     })
 
     //get projects
-    projects.find({},{},function(e,projects){
+    Project.find({}, function(e,projects){
       res.render('index', {
         title: 'taskTracker',
         events: events,
@@ -248,37 +248,33 @@ router.get('/cdChanges', function routerGetCdChanges(req, res, next){
 /* Handle addTask submit */
 router.post('/addTask', function(req, res){
 
-  var db = req.db,
-    collection = db.get('tasks'),
-    days = req.body.days
-
-  collection.find({},{}, function(err, doc){
-    console.log(doc);
-  })
+  var days = req.body.days
 
   for(var x=1; x<=days; x++){
     var start = moment(req.body['date-'+x]+' '+req.body['start-'+x], "DD/MM/YYYY HH:mm"),
       end = moment(req.body['date-'+x]+' '+req.body['end-'+x], "DD/MM/YYYY HH:mm")
 
-    var record = {
+    var task = new Task({
       "title": req.body.taskTitle,
       "start": start.utc().format(),
       "end": end.utc().format(),
       "projectID": req.body.project
-    }
+    })
 
-    collection.insert(record, function(err, doc){
+    Task.create(task, function(err){
       if(err){
         console.log(err)
-        res.send("There was an error")
+        res.json({
+          error: err
+        })
       }else{
-        console.log('inserted:')
-        console.log(record)
+        console.log(task._id)
+        res.json({
+          ok: true
+        })
       }
     })
   }
-
-  res.redirect("/")
 });
 
 

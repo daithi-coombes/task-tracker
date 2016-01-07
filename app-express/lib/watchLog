@@ -26,7 +26,7 @@ var watchLog = function(){
 
   // Connect to the db
   debugger;
-  MongoClient.connect("mongodb://"+Config.host+":"+Config.port+"/"+Config.dbName, function(err, db) {
+  MongoClient.connect("mongodb://"+Config.db.host+":"+Config.db.port+"/"+Config.db.dbName, function(err, db) {
     if(err) return console.dir(err)
 
     var collection = db.collection('dirChanges')

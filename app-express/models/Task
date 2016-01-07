@@ -1,0 +1,15 @@
+"use strict"
+
+var mongoose = require('mongoose'),
+  Schema = mongoose.Schema
+
+var taskSchema = new Schema({
+  title: String,
+  start: Date,
+  end: Date,
+  projectID: Object
+})
+
+var Task = mongoose.model('tasks', taskSchema)
+
+module.exports = Task
