@@ -37,7 +37,30 @@ router.get('/', function(req, res, next) {
       res.render('index', {
         title: 'taskTracker',
         events: events,
-        scripts: ['/javascripts/calendar.js'],
+        scripts: [
+          '/bower_components/jquery/dist/jquery.js',
+          '/bower_components/bootstrap/dist/js/bootstrap.min.js',
+          '/bower_components/moment/min/moment.min.js',
+          '/bower_components/bootstrap/js/transition.js',
+          '/bower_components/bootstrap/js/collapse.js',
+          '/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
+          '/bower_components/bootstrap-timepicker/js/bootstrap-timepicker.js',
+          '/bower_components/d3/d3.js',
+          '/bower_components/d3-tip/index.js',
+          '/vendor/threedubmedia/jquery.event.drag-2.2.js',
+          '/vendor/threedubmedia/jquery.event.drag.live-2.2.js',
+          '/vendor/threedubmedia/jquery.event.drop-2.2.js',
+          '/vendor/threedubmedia/jquery.event.drop.live-2.2.js',
+          '/vendor/threedubmedia/excanvas.min.js',
+          '/vendor/fullcalendar.min.js',
+          '/javascripts/calendar.js'
+        ],
+        styles: [
+          '/vendor/threedubmedia/base.css',
+          '/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css',
+          '/bower_components/bootstrap-timepicker/css/timepicker.css',
+          '/vendor/fullcalendar.min.css'
+        ],
         projects: projects,
         dbError: err || e
       });
@@ -160,7 +183,16 @@ router.get('/viz', function routerGetViz(req, res, next){
 
     res.render('viz', {
       title: 'taskTracker - data viz',
-      scripts: ['/javascripts/viz.js'],
+      styles: [
+        '/bower_components/bootstrap/dist/css/bootstrap.css'
+      ],
+      scripts: [
+        '/bower_components/jquery/dist/jquery.js',
+        '/bower_components/bootstrap/dist/js/bootstrap.js',
+        '/bower_components/moment/moment.js',
+        '/bower_components/d3/d3.js',
+        '/javascripts/viz.js'
+      ],
       projects: projects
     })
   })

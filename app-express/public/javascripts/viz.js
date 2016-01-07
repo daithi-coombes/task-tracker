@@ -10,19 +10,19 @@
  */
 $(document).ready(function loadViz(){
 
-  var viz = new Viz();
+  var viz = new Viz({
+    projects: projects
+  });
 
-  $('a#vizLoadData').on('click', function(e){viz.loadData(e);});
 })
 
 
 /**
  * @constructor
  */
-var Viz = function Viz(){
+var Viz = function Viz(data){
 
-  this.data = null;
-  this.sampleSize = 100;
+  this.projects = data.projects
 }
 
 /**
@@ -30,7 +30,7 @@ var Viz = function Viz(){
  * @param  {event} e The event
  * @return {Viz|Error}   Returns self for chaining, else Error.
  */
-Viz.prototype.loadData = function vizLoadData(e){
+Viz.prototype.manicTimeloadData = function vizManicTimeLoadData(e){
   e.preventDefault();
 
   var err = null,
@@ -39,7 +39,7 @@ Viz.prototype.loadData = function vizLoadData(e){
   self.sampleSize = $('input[name="sampleSize"]').val() || 100;
 
   //grab data from endpoint
-  self.getData(err, function vizGetDataCB(err, data){
+  self.getData(err, function vizManicTimeGetDataCB(err, data){
     if(err)
       throw new Error(err);
 
@@ -58,7 +58,7 @@ Viz.prototype.loadData = function vizLoadData(e){
  * @param  {Function} cb  callback.
  * @return {Viz}       returns self for chaning.
  */
-Viz.prototype.getData = function vizGetData(err, cb){
+Viz.prototype.manicTimeGetData = function vizManicTimeGetData(err, cb){
   if(err)
     throw new Error(err);
 
@@ -71,7 +71,7 @@ Viz.prototype.getData = function vizGetData(err, cb){
 }
 
 
-Viz.prototype.drawHarness = function vizDrawHarness(err){
+Viz.prototype.manicTimeDrawHarness = function vizManicTimeDrawHarness(err){
   if(err)
     throw new Error(err);
 
@@ -85,7 +85,7 @@ Viz.prototype.drawHarness = function vizDrawHarness(err){
  * LineChart
  * @param  {error} err The error.
  */
-Viz.prototype.drawChart = function drawChart(err){
+Viz.prototype.manicTimeDrawChart = function vizManicTimeDrawChart(err){
   if(err)
     throw new err;
 
