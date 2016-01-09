@@ -1,13 +1,10 @@
 var express     = require('express')
-  ,api          = require('./routes/api')
   ,bayes        = require('bayes')
   ,path         = require('path')
   ,favicon      = require('serve-favicon')
   ,logger       = require('morgan')
   ,cookieParser = require('cookie-parser')
   ,bodyParser   = require('body-parser')
-  ,routes       = require('./routes/index')
-  ,users        = require('./routes/users')
   ,mongo        = require('mongodb')
 
 var app        = express()
@@ -53,6 +50,14 @@ app.use(function(req,res,next){
   next()
 })
 
+
+/**
+ * Routes.
+ */
+var api   = require('./routes/api')
+  ,routes = require('./routes/index')
+  ,users  = require('./routes/users')
+
 app.use('/', routes)
 app.use('/api', api)
 app.use('/users', users)
@@ -63,9 +68,12 @@ app.use(function(req, res, next) {
   err.status = 404
   next(err)
 })
+//end Routes
 
-// error handlers
 
+/**
+ * error handlers
+ */
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
@@ -77,7 +85,6 @@ if (app.get('env') === 'development') {
     })
   })
 }
-
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
@@ -87,6 +94,7 @@ app.use(function(err, req, res, next) {
     error: {}
   })
 })
+//end error handlers
 
 
 module.exports = app

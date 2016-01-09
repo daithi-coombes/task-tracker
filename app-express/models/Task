@@ -1,15 +1,24 @@
 "use strict"
 
-var mongoose = require('mongoose'),
-  Schema = mongoose.Schema
+var mongoose  = require('mongoose')
+  ,moment     = require('moment')
+  ,Schema     = mongoose.Schema
 
-var taskSchema = new Schema({
+
+var TaskSchema = new Schema({
   title: String,
   start: Date,
   end: Date,
   projectID: Object
 })
 
-var Task = mongoose.model('tasks', taskSchema)
 
-module.exports = Task
+TaskSchema.virtual('duration').get(function(){
+
+  var duration = moment.duration(moment(this.end).diff(this.start))
+  return duration.asMinutes()
+})
+TaskSchema.set('toJSON', {virtuals: true})
+
+
+module.exports = mongoose.model('Task', TaskSchema, 'tasks')

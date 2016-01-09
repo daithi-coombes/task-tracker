@@ -10,12 +10,9 @@
  */
 $(document).ready(function loadViz(){
 
-  var viz = new Viz({
-    projects: projects
-  });
+  var viz = new Viz();
 
   //get project hours for this week
-  viz.projectGetWeekHours()
 
 })
 
@@ -25,22 +22,133 @@ $(document).ready(function loadViz(){
  */
 var Viz = function Viz(data){
 
-  this.projects = data.projects
+  var self = this;
+
+  this.data = null;
+
+  this.projectGetWeekHours(null, function(err, data){
+
+    self.data = data;
+
+    //get column data for bar chart
+    var column_data = []
+    data.forEach(function(doc, i){
+      column_data.push({
+        position: i,
+        title: doc.project.title,
+        color: doc.project.color,
+        minutes: doc.minutes
+      });
+    })
+
+    var total_width = 400;
+    var total_height = 200;
+    var legend_height = 20;
+    var bar_padding = 5;
+
+    var scale_y = d3.scale.linear()
+      .domain([0, d3.max(column_data, function(d){
+          return d.minutes;
+        })])
+      .range([0, total_height])
+
+    var scale_x = d3.scale.ordinal()
+      .domain(d3.range(column_data.length))
+      .rangeRoundBands([0, total_width], 0.05);
+
+    var position = function(d){
+      return d.position;
+    }
+
+    var svg_container = d3.select("#currentWeek")
+      .append("svg")
+      .attr("width", total_width)
+      .attr("height", total_height);
+
+    svg_container.selectAll("rect")
+      .data(column_data, position)
+      .enter()
+      .append("rect")
+      .attr("x", function(d, i){
+        return scale_x(i);
+      })
+      .attr("y", function(d){
+        return (total_height) - scale_y(d.minutes);
+      })
+      .attr("width", total_width / column_data.length - bar_padding)
+      .attr("height", function(d){
+        return scale_y(d.minutes)-legend_height;
+      })
+      .attr("fill", function(d, i){
+        return d.color;
+      })
+      .attr("opacity", "0.5");
+
+      svg_container.selectAll("text")
+        .data(column_data)
+        .enter()
+        .append("text")
+        .text(function(d){
+          return d.minutes;
+        })
+        .attr("x", function(d, i){
+          return i * (total_width / column_data.length) + (total_width / column_data.length - bar_padding) / 2;
+        })
+        .attr("y", function(d){
+          return (total_height) - scale_y(d.minutes) + 15;
+        })
+        .attr("text-anchor", "middle")
+
+  });
+
+  return self;
 }
 
-Viz.prototype.projectGetWeekHours = function vizProjectGetWeekHours(){
+
+/**
+ * Get Project Hours & Tasks for current week.
+ * @return {array} An array of project data.
+ */
+Viz.prototype.projectGetWeekHours = function vizProjectGetWeekHours(err, cb){
+
+  var cb
 
   //query api
   $.get(
     '/api/project/hours/week',
     function(json){
 
-      
-      console.log(json)
+      var _cb = cb
+
+      json.res.forEach(function(project, i){
+
+        var minutes = 0
+
+        //get total minutes
+        project.tasks.forEach(function(task, x){
+          minutes += task.duration
+        })
+
+        json.res[i].minutes = minutes
+      })
+
+      _cb(null, json.res)
     },
     'json'
   )
+
+  /**
+   * Get each projects total minutes over task.
+   * @param  {array} res An array of Project objects.
+   * @private
+   * @return {array}     The same data with total minutes added.
+   */
+  function getProjectsMinutes(res){
+
+  }
 }
+// end getProjectsMinutes()
+
 
 /**
  * load sample data.
