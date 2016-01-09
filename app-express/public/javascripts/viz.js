@@ -24,84 +24,88 @@ var Viz = function Viz(data){
 
   var self = this;
 
-  this.data = null;
-
-  this.projectGetWeekHours(null, function(err, data){
-
-    self.data = data;
-
-    //get column data for bar chart
-    var column_data = []
-    data.forEach(function(doc, i){
-      column_data.push({
-        position: i,
-        title: doc.project.title,
-        color: doc.project.color,
-        minutes: doc.minutes
-      });
-    })
-
-    var total_width = 400;
-    var total_height = 200;
-    var legend_height = 20;
-    var bar_padding = 5;
-
-    var scale_y = d3.scale.linear()
-      .domain([0, d3.max(column_data, function(d){
-          return d.minutes;
-        })])
-      .range([0, total_height])
-
-    var scale_x = d3.scale.ordinal()
-      .domain(d3.range(column_data.length))
-      .rangeRoundBands([0, total_width], 0.05);
-
-    var position = function(d){
-      return d.position;
-    }
-
-    var svg_container = d3.select("#currentWeek")
-      .append("svg")
-      .attr("width", total_width)
-      .attr("height", total_height);
-
-    svg_container.selectAll("rect")
-      .data(column_data, position)
-      .enter()
-      .append("rect")
-      .attr("x", function(d, i){
-        return scale_x(i);
-      })
-      .attr("y", function(d){
-        return (total_height) - scale_y(d.minutes);
-      })
-      .attr("width", total_width / column_data.length - bar_padding)
-      .attr("height", function(d){
-        return scale_y(d.minutes)-legend_height;
-      })
-      .attr("fill", function(d, i){
-        return d.color;
-      })
-      .attr("opacity", "0.5");
-
-      svg_container.selectAll("text")
-        .data(column_data)
-        .enter()
-        .append("text")
-        .text(function(d){
-          return d.minutes;
-        })
-        .attr("x", function(d, i){
-          return i * (total_width / column_data.length) + (total_width / column_data.length - bar_padding) / 2;
-        })
-        .attr("y", function(d){
-          return (total_height) - scale_y(d.minutes) + 15;
-        })
-        .attr("text-anchor", "middle")
-
-  });
+  self.projectGetWeekHours(null, self.projectWeekBarChar);
 
   return self;
+}
+
+/**
+ * Draw bar chart of project hours.
+ * @param  {Error} err  Error obj if any.
+ * @param  {json} data Data as array of objects.
+ */
+Viz.prototype.projectWeekBarChar = function vizProjectWeekBarChar(err, data){
+
+  //get column data for bar chart
+  var column_data = [];
+  data.forEach(function(doc, i){
+    column_data.push({
+      position: i,
+      title: doc.project.title,
+      color: doc.project.color,
+      minutes: doc.minutes
+    });
+  });
+
+  var total_width = 400;
+  var total_height = 200;
+  var legend_height = 20;
+  var bar_padding = 5;
+
+  var scale_y = d3.scale.linear()
+    .domain([0, d3.max(column_data, function(d){
+        return d.minutes;
+      })])
+    .range([0, total_height])
+
+  var scale_x = d3.scale.ordinal()
+    .domain(d3.range(column_data.length))
+    .rangeRoundBands([0, total_width], 0.05);
+
+  var position = function(d){
+    return d.position;
+  }
+
+  var svg_container = d3.select("#currentWeek")
+    .append("svg")
+    .attr("width", total_width)
+    .attr("height", total_height);
+
+  svg_container.selectAll("rect")
+    .data(column_data, position)
+    .enter()
+    .append("rect")
+    .attr("x", function(d, i){
+      return scale_x(i);
+    })
+    .attr("y", function(d){
+      return (total_height) - scale_y(d.minutes);
+    })
+    .attr("width", total_width / column_data.length - bar_padding)
+    .attr("height", function(d){
+      return scale_y(d.minutes)-legend_height;
+    })
+    .attr("fill", function(d, i){
+      return d.color;
+    })
+    .attr("opacity", "0.5");
+
+  svg_container.selectAll("text")
+    .data(column_data)
+    .enter()
+    .append("text")
+    .text(function(d){
+      var hrs = Math.floor(d.minutes/60)
+        ,minutes = d.minutes % 60;
+      return hrs+" hrs "+ ((minutes>0) ? minutes+" mins" : "");
+    })
+    .attr("x", function(d, i){
+      return i * (total_width / column_data.length) + (total_width / column_data.length - bar_padding) / 2;
+    })
+    .attr("y", function(d){
+      return (total_height) - scale_y(d.minutes) + 15;
+    })
+    .attr("text-anchor", "middle")
 }
 
 
@@ -111,7 +115,8 @@ var Viz = function Viz(data){
  */
 Viz.prototype.projectGetWeekHours = function vizProjectGetWeekHours(err, cb){
 
-  var cb
+  var cb,
+    self = this;
 
   //query api
   $.get(
@@ -127,10 +132,13 @@ Viz.prototype.projectGetWeekHours = function vizProjectGetWeekHours(err, cb){
         //get total minutes
         project.tasks.forEach(function(task, x){
           minutes += task.duration
+          //console.log(json.res[i].project.title+':'+minutes+' ('+task.duration+')'+task.id)
         })
 
         json.res[i].minutes = minutes
       })
+
+      self.data = json.res;
 
       _cb(null, json.res)
     },
