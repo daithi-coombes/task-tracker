@@ -48,7 +48,7 @@ Viz.prototype.projectWeekBarChar = function vizProjectWeekBarChar(err, data){
   });
 
   var total_width = 400;
-  var total_height = 200;
+  var total_height = 250;
   var legend_height = 20;
   var bar_padding = 5;
 
@@ -90,10 +90,11 @@ Viz.prototype.projectWeekBarChar = function vizProjectWeekBarChar(err, data){
     })
     .attr("opacity", "0.5");
 
-  svg_container.selectAll("text")
+  svg_container.selectAll("text.count")
     .data(column_data)
     .enter()
     .append("text")
+    .attr("class","count")
     .text(function(d){
       var hrs = Math.floor(d.minutes/60)
         ,minutes = d.minutes % 60;
@@ -103,9 +104,24 @@ Viz.prototype.projectWeekBarChar = function vizProjectWeekBarChar(err, data){
       return i * (total_width / column_data.length) + (total_width / column_data.length - bar_padding) / 2;
     })
     .attr("y", function(d){
-      return (total_height) - scale_y(d.minutes) + 15;
+      var y = (total_height) - scale_y(d.minutes) + 15;
+      return (y<220) ? y : 220;
     })
     .attr("text-anchor", "middle")
+
+  svg_container.selectAll("text.label")
+    .data(column_data)
+    .enter()
+    .append("text")
+    .attr("class", "count")
+    .text(function(d){
+      return d.title;
+    })
+    .attr("x", function(d, i){
+      return i * (total_width / column_data.length) + (total_width / column_data.length - bar_padding) / 2;
+    })
+    .attr("y", 250)
+    .attr("text-anchor", "middle");
 }
 
 
@@ -204,6 +220,9 @@ Viz.prototype.manicTimeGetData = function vizManicTimeGetData(err, cb){
 }
 
 
+/**
+ * @todo document this.
+ */
 Viz.prototype.manicTimeDrawHarness = function vizManicTimeDrawHarness(err){
   if(err)
     throw new Error(err);

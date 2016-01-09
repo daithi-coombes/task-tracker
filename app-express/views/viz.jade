@@ -5,14 +5,11 @@ block content
   
   .row
     .col-xs-12
-      h4 Projects
-      ul
-        each val in projects.length ? projects: ['There are no projects']
-          li(id="#{val._id}")= val.title
+      h2 Projects
   .row
     .col-xs-12
       .row
-        h4 Current weeks hours by project (barChart)
+        h4 Current weeks hours by project
         div#currentWeek
   script(type="text/javascript").
     var projects = !{JSON.stringify(projects)}
