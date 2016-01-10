@@ -1,4 +1,5 @@
 var config = {
+  token: null,            // @todo what was this for?
   host: 'localhost',
   port: 30001,
   db: {
