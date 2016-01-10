@@ -29,6 +29,10 @@ router.route('/project/hours/week')
       ,json = []
       ,startDate = moment().startOf('week')
 
+    //if today is sunday, then take 7 days
+    if(moment().format('dddd')=='Sunday')
+      startDate = moment().startOf('week').subtract(7, 'days')
+
     //get all projects
     Project.find({}, function(err, projects){
 
@@ -39,7 +43,7 @@ router.route('/project/hours/week')
           // get projects tasks
           Task.find({
               projectID: project.id,
-              end: { $gte: startDate}
+              end: { '$gte': startDate.toISOString()}
             },
             function(err, tasks){
 
