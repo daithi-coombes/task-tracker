@@ -7,9 +7,17 @@ var express     = require('express')
   ,bodyParser   = require('body-parser')
   ,mongo        = require('mongodb')
 
-var app        = express()
-  ,config      = require('./config.js')
+  var config      = require('./config.js')
   ,classifier  = bayes()
+
+
+/**
+ * passport
+ */
+var mongoose = require('mongoose')
+  ,passport = require('passport')
+  ,LocalStrategy = require('passport-local').Strategy
+//end passport
 
 
 /**
@@ -33,31 +41,38 @@ var revivedClassifier = bayes.fromJson(stateJson)
 var watchLog = require('./lib/watchLog')
 watchLog()
 
+
+// init express
+var api   = require('./routes/api')
+  ,routes = require('./routes/index')
+  ,users  = require('./routes/users')
+
+var app = express()
+// end init express
+
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'jade')
-
-// uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 app.use(logger('dev'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
+app.use(require('express-session')({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: false
+}))
+app.use(passport.initialize())
+app.use(passport.session())
 app.use(express.static(path.join(__dirname, 'public')))
-
-app.use(function(req,res,next){
-  //req.db = db
-  next()
-})
+// end view engine setup
 
 
 /**
  * Routes.
  */
-var api   = require('./routes/api')
-  ,routes = require('./routes/index')
-  ,users  = require('./routes/users')
-
 app.use('/', routes)
 app.use('/api', api)
 app.use('/users', users)
@@ -69,6 +84,20 @@ app.use(function(req, res, next) {
   next(err)
 })
 //end Routes
+
+
+/**
+ * Passport config.
+ */
+var User = require('./models/User')
+passport.use(new LocalStrategy(User.authenticate()))
+passport.serializeUser(User.serializeUser())
+passport.deserializeUser(User.deserializeUser())
+// end Passport config
+
+
+// mongoose
+var mongoose = mongoose.connect(config.db.host+':'+config.db.port+'/'+config.db.dbName)
 
 
 /**

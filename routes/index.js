@@ -5,21 +5,22 @@ var parse     = require('csv-parse')
   ,moment   = require('moment')
   ,mongoose = require('mongoose')
   ,multer   = require('multer')
+  ,passport = require('passport')
 
 var router = express.Router(),
   upload   = multer({dest: './uploads/'})
 
 
 // models
-var mongoose = mongoose.connect(config.db.host+':'+config.db.port+'/'+config.db.dbName)
-  ,conn       = mongoose.connection
-  ,ObjectID   = require('mongoose').ObjectID
-  ,Project    = require('../models/Project')
-  ,Task       = require('../models/Task')
+  var conn        = mongoose.connection
+  ,ObjectID       = require('mongoose').ObjectID
+  ,Project        = require('../models/Project')
+  ,Task           = require('../models/Task')
+  ,User           = require('../models/User')
 //end models
 
 
-/* GET home page. */
+// home page.
 router.get('/', function(req, res, next) {
 
   //get events
@@ -69,7 +70,35 @@ router.get('/', function(req, res, next) {
 })
 
 
-/* GET manicTime page */
+// login
+router.get('/register', function(req, res) {
+    res.render('register', { });
+});
+router.post('/register', function(req, res) {
+    User.register(new User({ username : req.body.username }), req.body.password, function(err, user) {
+        if (err) {
+            return res.render('register', { user : user });
+        }
+
+        passport.authenticate('local')(req, res, function () {
+            res.redirect('/');
+        });
+    });
+});
+router.get('/login', function(req, res) {
+    res.render('login', { user : req.user });
+});
+router.post('/login', passport.authenticate('local'), function(req, res) {
+    res.redirect('/');
+});
+router.get('/logout', function(req, res) {
+    req.logout();
+    res.redirect('/');
+});
+// end login
+
+
+// manicTime
 router.get('/manicTime', function routerManicTime(req, res, next){
 
   res.render('manicTime', {
@@ -176,7 +205,7 @@ router.get('/manicTime/getSample', function routerManicTimeSample(req, res, next
 })
 
 
-/* GET data viz page */
+// data viz
 router.get('/viz', function routerGetViz(req, res, next){
 
   Project.find(function(err, projects){
@@ -211,7 +240,7 @@ router.get('/viz/getData', function routerVizData(req, res, next){
 })
 
 
-/* GET cdChanges page */
+// cdChanges
 router.get('/cdChanges', function routerGetCdChanges(req, res, next){
 
   var db = req.db,
@@ -245,7 +274,7 @@ router.get('/cdChanges', function routerGetCdChanges(req, res, next){
   })
 })
 
-/* Handle addTask submit */
+// addTask
 router.post('/addTask', function(req, res){
 
   var days = req.body.days
@@ -278,7 +307,7 @@ router.post('/addTask', function(req, res){
 });
 
 
-/* Handle crudProject submit */
+// crudProject
 router.post('/crudProject', function(req, res){
 
   var db = req.db,
