@@ -9,7 +9,18 @@ block content
   .row
     .col-xs-12
       .row
-        h4 Current weeks hours by project
-        div#currentWeek
+        .col-xs-12
+          h4 Current weeks hours by project
+          .form-group
+            label.col-sm-2.control-label(for="weekNo") Select week(#{weekNo})
+            .col-sm-2
+              select.form-control(name="weekNo", id="weekNo")
+                - for (var x = 1; x < 53; x++)
+                  option(selected=weekNo==x)= x
+            .col-sm-2
+              a#getProjectWeek.btn.btn-primary get data
+      .row
+        .col-xs-12
+          div#currentWeek
   script(type="text/javascript").
     var projects = !{JSON.stringify(projects)}

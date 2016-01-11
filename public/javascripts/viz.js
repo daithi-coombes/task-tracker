@@ -12,8 +12,15 @@ $(document).ready(function loadViz(){
 
   var viz = new Viz();
 
-  //get project hours for this week
+  $('a#getProjectWeek').on('click', function(e){
+    e.preventDefault();
 
+    var weekNo = $('select#weekNo').val();
+
+    viz.projectGetWeekHours(null, viz.projectWeekBarChar, weekNo)
+
+    return false;
+  })
 })
 
 
@@ -66,6 +73,7 @@ Viz.prototype.projectWeekBarChar = function vizProjectWeekBarChar(err, data){
     return d.position;
   }
 
+  $('#currentWeek').html('');
   var svg_container = d3.select("#currentWeek")
     .append("svg")
     .attr("width", total_width)
@@ -132,11 +140,15 @@ Viz.prototype.projectWeekBarChar = function vizProjectWeekBarChar(err, data){
 Viz.prototype.projectGetWeekHours = function vizProjectGetWeekHours(err, cb){
 
   var cb,
-    self = this;
+    self = this,
+    weekNo = arguments[2] || moment().week()
 
   //query api
-  $.get(
+  $.post(
     '/api/project/hours/week',
+    {
+      weekNo: weekNo
+    },
     function(json){
 
       var _cb = cb
@@ -148,7 +160,6 @@ Viz.prototype.projectGetWeekHours = function vizProjectGetWeekHours(err, cb){
         //get total minutes
         project.tasks.forEach(function(task, x){
           minutes += task.duration
-          //console.log(json.res[i].project.title+':'+minutes+' ('+task.duration+')'+task.id)
         })
 
         json.res[i].minutes = minutes

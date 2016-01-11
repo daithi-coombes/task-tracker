@@ -19,6 +19,23 @@ var router = express.Router(),
   ,User           = require('../models/User')
 //end models
 
+/**
+ * Middleware.
+ * Check if user is logged in.
+ * @todo fix login timeout bug and uncomment below code block.
+ * @param  {request}   req  The request object.
+ * @param  {response}   res  The response object
+ * @param  {Function} next callback
+ */
+function isAuthenticated(req, res, next) {
+  return next();
+
+  if(req.isAuthenticated())
+    return next();
+
+  res.redirect(403, '/login');
+}
+
 
 // home page.
 router.get('/', function(req, res, next) {
@@ -99,7 +116,7 @@ router.get('/logout', function(req, res) {
 
 
 // manicTime
-router.get('/manicTime', function routerManicTime(req, res, next){
+router.get('/manicTime', isAuthenticated, function routerManicTime(req, res, next){
 
   res.render('manicTime', {
     title: 'taskTracker - manicTime',
@@ -110,7 +127,7 @@ router.get('/manicTime', function routerManicTime(req, res, next){
   })
 })
 
-router.post('/manicTime/upload', upload.single('csv'), function routerManicTimeUpload(req, res, next){
+router.post('/manicTime/upload', function(req, res, next){ if(isAuthenticated()) upload.single('csv'); return next()}, function routerManicTimeUpload(req, res, next){
 
   var oldName = './'+req.file.path,
     newName = './uploads/'+req.file.originalname
@@ -119,7 +136,7 @@ router.post('/manicTime/upload', upload.single('csv'), function routerManicTimeU
   res.redirect('/manicTime?msg=file uploaded successfully')
   next()
 })
-router.post('/manicTime/parse', function parseManicTimeFile(req, res, next){
+router.post('/manicTime/parse', isAuthenticated, function parseManicTimeFile(req, res, next){
 
   var db = req.db,
     collection = db.get('manicTime'),
@@ -160,7 +177,7 @@ router.post('/manicTime/parse', function parseManicTimeFile(req, res, next){
 
   res.end('[{msg:hi}]')
 })
-router.get('/manicTime/getSample', function routerManicTimeSample(req, res, next){
+router.get('/manicTime/getSample', isAuthenticated, function routerManicTimeSample(req, res, next){
 
   var db = req.db,
     collection = db.get('manicTime'),
@@ -206,12 +223,13 @@ router.get('/manicTime/getSample', function routerManicTimeSample(req, res, next
 
 
 // data viz
-router.get('/viz', function routerGetViz(req, res, next){
+router.get('/viz', isAuthenticated, function routerGetViz(req, res, next){
 
   Project.find(function(err, projects){
 
     res.render('viz', {
       title: 'taskTracker - data viz',
+      weekNo: moment().week(),
       styles: [
         '/bower_components/bootstrap/dist/css/bootstrap.css'
       ],
@@ -227,7 +245,7 @@ router.get('/viz', function routerGetViz(req, res, next){
   })
 
 })
-router.get('/viz/getData', function routerVizData(req, res, next){
+router.get('/viz/getData', isAuthenticated, function routerVizData(req, res, next){
 
   var db = req.db,
     collection = db.get("manicTime")
@@ -241,7 +259,7 @@ router.get('/viz/getData', function routerVizData(req, res, next){
 
 
 // cdChanges
-router.get('/cdChanges', function routerGetCdChanges(req, res, next){
+router.get('/cdChanges', isAuthenticated, function routerGetCdChanges(req, res, next){
 
   var db = req.db,
     collection = db.get('dirChanges')
@@ -275,7 +293,7 @@ router.get('/cdChanges', function routerGetCdChanges(req, res, next){
 })
 
 // addTask
-router.post('/addTask', function(req, res){
+router.post('/addTask', isAuthenticated, function(req, res){
 
   var days = req.body.days
 
@@ -308,7 +326,7 @@ router.post('/addTask', function(req, res){
 
 
 // crudProject
-router.post('/crudProject', function(req, res){
+router.post('/crudProject', isAuthenticated, function(req, res){
 
   var db = req.db,
     collection = db.get('projects')

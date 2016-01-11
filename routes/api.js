@@ -23,9 +23,18 @@ var Project = require('../models/Project')
 
 // get total hours per project between startDate & endDate
 router.route('/project/hours/week')
-  .get(function(req, res){
+  .post(function(req, res){
 
-    var endDate = moment().endOf('week').add(1, 'days').toISOString()
+
+    //get requested week number
+    var week = req.body.weekNo || null,
+      start = moment().day("Sunday").week(week),
+      end = moment().day("Monday").week(+week+1);
+    console.log(req.body.weekNo)
+    console.log(start.toISOString())
+    console.log(end.toISOString())
+
+    var endDate = moment().endOf('week').add(1, 'days')
       ,json = []
       ,startDate = moment().startOf('week')
 
@@ -43,7 +52,8 @@ router.route('/project/hours/week')
           // get projects tasks
           Task.find({
               projectID: project.id,
-              end: { '$gte': startDate.toISOString()}
+              end: { '$gte': start.toISOString()},
+              start: { '$lt': end.toISOString()}
             },
             function(err, tasks){
 
