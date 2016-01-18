@@ -25,7 +25,7 @@ var Project = require('../models/Project')
 router.route('/project/hours/week')
   .post(function(req, res){
 
-
+    /**
     //get requested week number
     var week = req.body.weekNo || null,
       start = moment().day("Sunday").week(week),
@@ -41,6 +41,14 @@ router.route('/project/hours/week')
     //if today is sunday, then take 7 days
     if(moment().format('dddd')=='Sunday')
       startDate = moment().startOf('week').subtract(7, 'days')
+    console.log(startDate.toISOString())
+    console.log(endDate.toISOString())
+    */
+
+    var week = req.body.weekNo || null,
+      start = moment().day("Monday").week(week),
+      end = moment().day("Monday").week(+week+1),
+      json = []
 
     //get all projects
     Project.find({}, function(err, projects){
@@ -69,8 +77,8 @@ router.route('/project/hours/week')
           res.json({
             res: json,
             week: {
-              start: startDate.add(1, 'days').toISOString(),
-              end: endDate
+              start: start.toISOString(),//startDate.add(1, 'days').toISOString(),
+              end: end.toISOString()//endDate
             }
           })
         }
