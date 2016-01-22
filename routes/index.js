@@ -231,13 +231,15 @@ router.get('/viz', isAuthenticated, function routerGetViz(req, res, next){
       title: 'taskTracker - data viz',
       weekNo: moment().week(),
       styles: [
-        '/bower_components/bootstrap/dist/css/bootstrap.css'
+        '/bower_components/bootstrap/dist/css/bootstrap.css',
+        '/stylesheets/viz.css'
       ],
       scripts: [
         '/bower_components/jquery/dist/jquery.js',
         '/bower_components/bootstrap/dist/js/bootstrap.js',
         '/bower_components/moment/moment.js',
         '/bower_components/d3/d3.js',
+        '/bower_components/d3-tip/index.js',
         '/javascripts/viz.js'
       ],
       projects: projects

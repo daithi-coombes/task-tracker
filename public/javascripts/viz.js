@@ -46,8 +46,10 @@ Viz.prototype.projectWeekBarChar = function vizProjectWeekBarChar(err, data){
   //get column data for bar chart
   var column_data = [];
   data.forEach(function(doc, i){
+    console.log(doc);
     column_data.push({
       position: i,
+      tasks: doc.tasks,
       title: doc.project.title,
       color: doc.project.color,
       minutes: doc.minutes
@@ -79,6 +81,19 @@ Viz.prototype.projectWeekBarChar = function vizProjectWeekBarChar(err, data){
     .attr("width", total_width)
     .attr("height", total_height);
 
+  var tip = d3.tip()
+    .attr('class', 'd3-tip')
+    .offset([-10, 0])
+    .html(function(d) {
+      var html = '<ul>\n';
+      $(d.tasks).each(function(i, task){
+        html += '<li><span class="tip-minutes">'+(+task.duration/60)+'</span><strong>'+task.title+'</strong></li>\n';
+      })
+      return html+'</ul>\n';
+    })
+
+  svg_container.call(tip);
+
   svg_container.selectAll("rect")
     .data(column_data, position)
     .enter()
@@ -96,7 +111,9 @@ Viz.prototype.projectWeekBarChar = function vizProjectWeekBarChar(err, data){
     .attr("fill", function(d, i){
       return d.color;
     })
-    .attr("opacity", "0.5");
+    .attr("opacity", "0.5")
+    .on('mouseover', tip.show)
+    .on('mouseout', tip.hide);
 
   svg_container.selectAll("text.count")
     .data(column_data)

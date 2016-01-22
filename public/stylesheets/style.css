@@ -53,32 +53,3 @@ a {
 	background-color: #CEB;
 	border-color: #9B8;
 	}
-
-
-/**
- * d3 line chars - \viz
- */
-path {
-    stroke: steelblue;
-    stroke-width: 2;
-    fill: none;
-}
-.axis path,
-.axis line {
-    fill: none;
-    stroke: grey;
-    stroke-width: 1;
-    shape-rendering: crispEdges;
-}
-div.tooltip {
-  position: absolute;
-  text-align: center;
-  width: 60px;
-  height: 28px;
-  padding: 2px;
-  font: 12px sans-serif;
-  background: lightsteelblue;
-  border: 0px;
-  border-radius: 8px;
-  pointer-events: none;
-}
