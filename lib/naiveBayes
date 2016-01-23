@@ -1,0 +1,135 @@
+/**
+ * Use machine learning to predict what tasks belong to which project.
+ * @author daithi coombes <webeire@gmail.com>
+ */
+"use strict"
+
+var bayes     = require('bayes'),
+  Classified  = require('../models/Classified'),
+  Project     = require('../models/Project')
+
+/**
+ * sandbox for the taskTracker project.
+ */
+var TaskTracker = function TaskTrackerClass(){
+
+  var self = this
+
+  this.classifier = bayes()
+
+  /**
+   * View method.
+   * @param  {Request}   req  The express request object.
+   * @param  {Response}   res  The express response object.
+   * @param  {Function} next The express callback.
+   */
+  this.view = function TaskTrackerView(req, res, next){
+
+    var self = this
+
+    //learn
+    learn(function(err){
+      if(err) return next(err)
+
+      var json = []
+
+      //classify
+      if(req.query.string)
+        json = categorize(req.query.string)
+
+      console.log(json)
+
+      //render
+      res.render('taskTracker', {
+        title: 'taskTracker',
+        stateJson: json
+      })
+    })
+  }
+
+  /**
+   * Learn docs already categorized.
+   * @private
+   * @param  {Function} cb      Callback function.
+   * @return {TaskTracker} Returns self for chaining.
+   */
+  var learn = function TaskTrackerLearn(cb){
+
+    var count = 0
+
+    //get projects
+    self.getProjects(function(err, projects){
+      if(err) return cb(err)
+
+      projects.forEach(function(project, i){
+
+        //get strings for projects
+        self.getStrings(project, function(err, strings){
+          if(err) return cb(err)
+
+          strings.forEach(function(string, x){
+            console.log('learnt:')
+            console.log('\t'+string.text+': '+project.title)
+            self.classifier.learn(string.text, project.title)
+          })
+
+          count++
+          console.log(count+ ' : ' +projects.length)
+          if(count>=projects.length)
+            cb(null)
+        })
+      })
+    })
+
+    return self
+  }
+
+  /**
+   * Categories a document.
+   * @private
+   * @param  {string} doc The document / text to categorize.
+   * @return {json}     Returns the classifier & result {prediction, classifier}
+   */
+  var categorize = function TaskTrackerCategorize(doc){
+
+    var project = self.classifier.categorize(doc)
+
+    // serialize the classifier's state as a JSON string.
+    var stateJson = self.classifier.toJson()
+
+    // load the classifier back from its JSON representation.
+    self.classifier = bayes.fromJson(stateJson)
+
+    return {
+      "prediction": project,
+      "classifier": stateJson
+    }
+  }
+}
+
+/**
+ * Get projects from db.
+ * @param  {Function} cb Callback function(err, projects)
+ * @return {array} Array of project docs
+ */
+TaskTracker.prototype.getProjects = function getProjects(cb){
+  Project.find(function(err, projects){
+    if(err) return cb(err, null)
+    cb(null, projects)
+  })
+}
+
+/**
+ * Get known strings per project from db.
+ * @param  {object}   project A project object {_id, title}
+ * @param  {Function} cb      Callback function.
+ */
+TaskTracker.prototype.getStrings = function TaskTrackerGetStrings(project, cb){
+
+  Classified.find({projectId: project._id}, function(err, strings){
+    if(err) return cb(err)
+    return cb(null, strings)
+  })
+}
+
+module.exports = new TaskTracker()
