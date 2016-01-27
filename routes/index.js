@@ -1,18 +1,19 @@
 var parse     = require('csv-parse')
-  ,config   = require('../config.js')
-  ,express  = require('express')
-  ,fs       = require('fs')
-  ,moment   = require('moment')
-  ,mongoose = require('mongoose')
-  ,multer   = require('multer')
-  ,passport = require('passport')
+  ,config     = require('../config.js')
+  ,express    = require('express')
+  ,fs         = require('fs')
+  ,moment     = require('moment')
+  ,mongoose   = require('mongoose')
+  ,multer     = require('multer')
+  ,naiveBayes = require('../lib/naiveBayes')
+  ,passport   = require('passport')
 
 var router = express.Router(),
   upload   = multer({dest: './uploads/'})
 
 
 // models
-  var conn        = mongoose.connection
+var conn        = mongoose.connection
   ,ObjectID       = require('mongoose').ObjectID
   ,Project        = require('../models/Project')
   ,Task           = require('../models/Task')
@@ -113,6 +114,10 @@ router.get('/logout', function(req, res) {
     res.redirect('/');
 });
 // end login
+
+
+// naive bayes
+router.get('/naiveBayes', isAuthenticated, naiveBayes.view)
 
 
 // manicTime
@@ -318,9 +323,10 @@ router.post('/addTask', isAuthenticated, function(req, res){
         })
       }else{
         console.log(task._id)
-        res.json({
-          ok: true
-        })
+        return res.redirect('/')
+        //res.json({
+        //  ok: true
+        //})
       }
     })
   }

@@ -4,9 +4,13 @@
  */
 "use strict"
 
-var bayes     = require('bayes'),
-  Classified  = require('../models/Classified'),
-  Project     = require('../models/Project')
+var async   = require('async'),
+  bayes     = require('bayes'),
+  mongoose  = require('mongoose')
+
+// models
+var Task    = require('../models/Task'),
+  Project   = require('../models/Project')
 
 /**
  * sandbox for the taskTracker project.
@@ -27,7 +31,7 @@ var TaskTracker = function TaskTrackerClass(){
 
     var self = this
 
-    //learn
+    //learn sample data
     learn(function(err){
       if(err) return next(err)
 
@@ -40,8 +44,8 @@ var TaskTracker = function TaskTrackerClass(){
       console.log(json)
 
       //render
-      res.render('taskTracker', {
-        title: 'taskTracker',
+      res.render('naiveBayes', {
+        title: 'naiveBayes',
         stateJson: json
       })
     })
@@ -55,30 +59,39 @@ var TaskTracker = function TaskTrackerClass(){
    */
   var learn = function TaskTrackerLearn(cb){
 
-    var count = 0
+    var _cb = cb,
+      _self = this,
+      count = 0
 
-    //get projects
-    self.getProjects(function(err, projects){
-      if(err) return cb(err)
+    //get tasks that have been classified
+    Task.find({projectID: {$ne: null}}, function(err, tasks){
+      if(err) return cb(err, null)
 
-      projects.forEach(function(project, i){
+      //loop tasks and learn in this classifier instance.
+      async.each(
+        tasks,
+        function(task, cb){
 
-        //get strings for projects
-        self.getStrings(project, function(err, strings){
-          if(err) return cb(err)
+          // case projectID to mongo.ObjectId()
+          var projectId = (typeof task.projectID=='string')
+            ? mongoose.Types.ObjectId(task.projectID)
+            : task.projectID
 
-          strings.forEach(function(string, x){
-            console.log('learnt:')
-            console.log('\t'+string.text+': '+project.title)
-            self.classifier.learn(string.text, project.title)
+          //get project name
+          Project.findOne({_id: projectId}, function(err, project){
+            if(err) return cb(err, null)
+
+            //learn
+            self.classifier.learn(task.title, project.name)
+            count++
+            cb()
           })
-
-          count++
-          console.log(count+ ' : ' +projects.length)
-          if(count>=projects.length)
-            cb(null)
-        })
-      })
+        },
+        function(err){
+          console.log('classifier has learnt: '+count+' strings')
+          return _cb(err)
+        }
+      )
     })
 
     return self
@@ -126,7 +139,7 @@ TaskTracker.prototype.getProjects = function getProjects(cb){
  */
 TaskTracker.prototype.getStrings = function TaskTrackerGetStrings(project, cb){
 
-  Classified.find({projectId: project._id}, function(err, strings){
+  Task.find({projectId: project._id}, function(err, strings){
     if(err) return cb(err)
     return cb(null, strings)
   })
