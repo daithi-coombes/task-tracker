@@ -3,6 +3,7 @@
 var watchLog = function(){
   //mongodb://127.0.0.1:3001/meteor
   // Retrieve
+
   var Config      = require('../config.js')
     ,Util         = require('util')
     ,MongoClient  = require('mongodb').MongoClient
@@ -10,7 +11,7 @@ var watchLog = function(){
     ,Tail         = require('always-tail')
 
   var tail = new Tail('/var/log/terminal-cd.log', '\n'),
-    writer = Spawn('/opt/taskTracker/bin/writeLog.sh')
+    writer = Spawn('./bin/writeLog.sh')
 
 
   //writer process callbacks

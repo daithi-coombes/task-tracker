@@ -27,5 +27,8 @@
     "d3": "~3.5.12",
     "bootstrap-timepicker": "~0.5.2",
     "d3-tip": "~0.6.7"
+  },
+  "resolutions": {
+    "d3": "~3.5.12"
   }
 }

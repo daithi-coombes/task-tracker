@@ -6,6 +6,8 @@
 # @author daithi coombes <webeire@gmail.com>
 # @url https://github.com/daithi-coombes/task-tracker
 
+echo "writing cd changes to:"
+echo -e '\t/var/lob/terminal-cd.log'
 tail -f ~/.bash_history | while read line; do
 
   datetimeCmd="$(date -u -Ins) $line"
