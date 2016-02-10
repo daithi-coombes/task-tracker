@@ -77,7 +77,7 @@ router.get('/', function(req, res, next) {
         styles: [
           '/vendor/threedubmedia/base.css',
           '/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css',
-          '/bower_components/bootstrap-timepicker/css/timepicker.css',
+          '/bower_components/bootstrap-timepicker/css/timepicker.less',
           '/vendor/fullcalendar.min.css'
         ],
         projects: projects,
@@ -336,14 +336,13 @@ router.post('/addTask', isAuthenticated, function(req, res){
 // crudProject
 router.post('/crudProject', isAuthenticated, function(req, res){
 
-  var db = req.db,
-    collection = db.get('projects')
+  var id = req.body.id || new mongoose.Types.ObjectId()
 
-  var record = {
+  var record = new Project({
+    _id: id,
     title: req.body.projectTitle
-  }
-
-  collection.insert(record, function(err, doc){
+  })
+  record.save(function(err, doc){
     if(err){
       console.log(err)
       res.send('There was an error')
