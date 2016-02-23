@@ -33,7 +33,7 @@ var TaskTracker = function TaskTrackerClass(){
 
     //learn sample data
     learn(function(err){
-      if(err) return next(err)
+      if(err) console.log(err)
 
       var json = []
 
@@ -41,7 +41,6 @@ var TaskTracker = function TaskTrackerClass(){
       if(req.query.string)
         json = categorize(req.query.string)
 
-      console.log(json)
 
       //render
       res.render('naiveBayes', {
@@ -68,9 +67,13 @@ var TaskTracker = function TaskTrackerClass(){
       if(err) return cb(err, null)
 
       //loop tasks and learn in this classifier instance.
-      async.each(
+      var foo = 0
+      async.eachSeries(
         tasks,
         function(task, cb){
+
+          if(task.projectID == 'none')
+            return cb()
 
           // case projectID to mongo.ObjectId()
           var projectId = (typeof task.projectID=='string')
@@ -79,17 +82,16 @@ var TaskTracker = function TaskTrackerClass(){
 
           //get project name
           Project.findOne({_id: projectId}, function(err, project){
-            if(err) return cb(err, null)
+            if(err) return cb(err)
 
             //learn
-            self.classifier.learn(task.title, project.name)
+            self.classifier.learn(task.title, project.title)
             count++
             cb()
           })
         },
-        function(err){
-          console.log('classifier has learnt: '+count+' strings')
-          return _cb(err)
+        function done(){
+          return _cb()
         }
       )
     })

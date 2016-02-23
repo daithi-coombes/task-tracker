@@ -17,4 +17,6 @@ block content
           li grab sampel of tasks wihtout a projectId (test data)
           li classify
   
-  script var stateJson = !{JSON.stringify(stateJson)}
+  script.
+    var prediction = '#{stateJson.prediction}'
+    var stateJson = !{stateJson.classifier}
