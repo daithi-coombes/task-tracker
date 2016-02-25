@@ -5,6 +5,12 @@ block content
 
   p Drag out your hours to enter them
 
+  .container
+    .row
+      .col-md-12
+        for project in projects
+          button.btn.btn-default(style="background-color: #{project.color}; color: #fff") #{project.title}
+
   div#calendar
 
   div#projectModal.modal.fade

@@ -41,18 +41,26 @@ function isAuthenticated(req, res, next) {
 // home page.
 router.get('/', function(req, res, next) {
 
-  //get events
-  Task.find({}, function(err,events){
+  Project.find({}, function(e,projects){
 
-    //format dateTime for jquery calendar
-    events.map(function(event, i, events){
-      event.start = moment(event.start).utc().format().replace(/\+.+/, '')
-      event.end = moment(event.end).utc().format().replace(/\+.+/, '')
-      return event
-    })
+    //get events
+    Task.find({}, function(err,events){
 
-    //get projects
-    Project.find({}, function(e,projects){
+      //format dateTime for jquery calendar
+      events.map(function(event, i, events){
+        event.start = moment(event.start).utc().format().replace(/\+.+/, '')
+        event.end = moment(event.end).utc().format().replace(/\+.+/, '')
+
+        //get project details
+        projects.forEach(function(project){
+          if(event.projectID == project._id)
+            event.color = project.color
+        })
+
+        return event
+      })
+
+      //get projects
       res.render('index', {
         title: 'taskTracker',
         events: events,

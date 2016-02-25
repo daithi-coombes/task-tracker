@@ -16,6 +16,8 @@ $(document).ready(function(){
       }
     ],*/
     events: window.events,
+    eventRender: function(event, element){
+    },
     customButtons: {
       crudProjects: {
         text: 'Projects',

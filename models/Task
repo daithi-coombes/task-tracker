@@ -9,6 +9,10 @@ var TaskSchema = new Schema({
   title: String,
   start: Date,
   end: Date,
+  color: {
+    type: String,
+    default: '#3a87ad'
+  },
   projectID: Object
 })
 
