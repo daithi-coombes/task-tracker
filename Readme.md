@@ -8,33 +8,35 @@ git clone https://github.com/daithi-coombes/task-tracker
 cd task-tracker
 ```
 
-if you want live metrics then add this to your `~/.bashrc` file:
+Copy the `config-dist.js` file as `config.js` and update the details if
+needed. (current values are defaults and should work out of box).
+
+if you want live metrics then add this to your `~/.bashrc` file: (@todo move
+this into main application).
 ```
 shopt -s histappend
 export PROMPT_COMMAND="history -a;$PROMPT_COMMAND"
 ```
 
-next run bash script to write cd changes to logfile
+next run bash script to write cd changes to logfile. This will log directory
+changes that you might make in your terminal. (@todo move start/stop into the
+main application).
 ```
 ./bin/writeLog.sh
-node bin/watchLog.js
 ```
 
-finally to view the gui, change to `app` directory and run the nodejs
+finally to view the gui, from project root directory, run the nodejs
 application.
 ```
-cd app-express
 npm install
 npm start
 ```
 
-For unique dirchanges (on some systems duplicate records are recored when new
-  terminal is opened):
+(@todo on some systems duplicate records are recored when new
+ terminal is opened). This may need the collection created above to be set as
+ unique.
 ```
-cd task-tracker/app
-meteor mongo
-meteor:PRIMARY> db.dirChanges.createIndex({"dateTime":1},{unique: true})
-meteor:PRIMARY> quit()
+db.dirChanges.createIndex({"dateTime":1},{unique: true})
 ```
 
 # q[ -_-]p
